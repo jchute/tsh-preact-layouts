@@ -1,0 +1,64 @@
+.name {
+  align-self: center;
+  grid-row: span 2;
+  overflow: hidden;
+  padding: 0.35em 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+
+  .tag + & {
+    align-self: start;
+    grid-row: span 1;
+    padding: 0;
+  }
+}
+
+.score {
+  aspect-ratio: 1;
+  background-color: white;
+  color: black;
+  font-size: 1.5vw;
+  display: grid;
+  grid-area: score;
+  place-items: center;
+  padding: 0.5em;
+}
+
+.side {
+  display: grid;
+  font-size: 0.65em;
+  grid-area: side;
+  place-items: center;
+}
+
+.tag {
+  align-self: end;
+  font-size: 0.7em;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.team {
+  display: grid;
+  font-size: 1.6875em;
+  gap: 0 0.5em;
+  line-height: 1;
+  padding-right: 0.5em;
+  grid-template-areas:
+    "score . side"
+    "score . side";
+  grid-template-columns: auto 1fr auto;
+
+  &.flip {
+    grid-template-areas:
+      "side tag score"
+      "side name score";
+    padding-left: 0.5em;
+    padding-right: 0;
+    text-align: right;
+  }
+}

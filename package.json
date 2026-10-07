@@ -1,0 +1,25 @@
+{
+  "name": "tsh-preact-layouts",
+  "version": "1.0.0",
+  "main": "vite.config.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "Jonch",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "preact": "^10.26.6",
+    "vite": "^6.3.5"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.1",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "sass-embedded": "^1.89.0"
+  }
+}

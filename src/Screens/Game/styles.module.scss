@@ -1,0 +1,35 @@
+@use "@Assets/Scss/Settings/colors";
+
+.blue {
+  background-color: colors.$blue;
+}
+
+.casters {
+  display: grid;
+  font-size: 1.25vw;
+  text-align: right;
+  opacity: 0.8;
+  padding: 0 2.5vw;
+}
+
+.icon {
+  margin-left: 0.25em;
+}
+
+.red {
+  background-color: colors.$red;
+}
+
+.scoreboard {
+  align-content: center;
+  background-color: white;
+  display: grid;
+  grid-template-columns: 1fr 20vw 1fr;
+  margin: 1.2vw auto 0;
+  text-shadow: none;
+  width: 65vw;
+}
+
+.screen {
+  align-content: start;
+}
