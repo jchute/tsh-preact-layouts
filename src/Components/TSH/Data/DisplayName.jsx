@@ -9,8 +9,8 @@ export const DisplayName = ({ team: _team, ...props }) => {
 
   const value = isDoubles
     ? team?.teamName ||
-      Object.entries(players)
-        .map(([k, p]) => p.name)
+      Object.values(players)
+        .map((p) => p.name)
         .join(" / ")
     : players[1]?.name;
 

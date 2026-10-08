@@ -1,15 +1,4 @@
 {
-  "images": {
-    "organizer_logo": "logo.png",
-    "venue_logo": "venue.png"
-  },
-  "text": {
-    "banner": "View Our Bracket: start.gg/",
-    "facebook": "",
-    "twitch": "",
-    "twitter": "",
-    "youtube": ""
-  },
   "data_path": {
     "dev": "http://127.0.0.1:8080/Jonch_Twitch/TSH/out/program_state.json"
   }

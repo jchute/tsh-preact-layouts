@@ -10,8 +10,8 @@ export const DisplayTag = ({ team: _team, ...props }) => {
   const value = !isDoubles
     ? players[1]?.team
     : team?.teamName
-      ? Object.entries(players)
-          .map(([k, p]) => p.name)
+      ? Object.values(players)
+          .map((p) => p.name)
           .join(" / ")
       : "";
 

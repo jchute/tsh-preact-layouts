@@ -4,12 +4,11 @@ import GameContext from "./GameContext";
 
 export const ScreenLoader = ({ screen = "Hub", scoreboard }) => {
   const game = useScoreboardData(scoreboard);
-  const ScreenComponent = Screens[screen] || Screens["Hub"];
-  console.log(game);
+  const ScreenComponent = Screens[screen] || null;
 
   return (
     <GameContext.Provider value={game}>
-      <ScreenComponent />
+      {ScreenComponent && <ScreenComponent />}
     </GameContext.Provider>
   );
 };

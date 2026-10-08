@@ -1,25 +1,33 @@
 {
   "name": "tsh-preact-layouts",
   "version": "1.0.0",
-  "main": "vite.config.js",
-  "scripts": {},
-  "keywords": [],
+  "private": true,
+  "description": "Drop-in Preact components for building custom TSH stream layouts.",
   "author": "Jonch",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-brands-svg-icons": "^6.7.2",
-    "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "preact": "^10.26.6",
-    "vite": "^6.3.5"
+    "preact": "^10.26.6"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@preact/preset-vite": "^2.10.1",
     "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.13.0",
     "prettier": "^3.6.2",
-    "sass-embedded": "^1.89.0"
+    "sass-embedded": "^1.89.0",
+    "vite": "^6.4.4"
   }
 }

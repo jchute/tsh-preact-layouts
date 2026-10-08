@@ -6,20 +6,18 @@ export const Image = ({ className = "", height, hide = false, source, width }) =
     return;
   }
 
-  const style = {
-    "--src": `url("${source}")`,
-  };
+  const style = {};
+
+  if (source) {
+    style["--src"] = `url("${source}")`;
+  }
 
   if (width) {
     style.width = width;
   }
 
-  if (height) {
-    style.height = height;
-  } else {
-    if (width) {
-      style.height = width;
-    }
+  if (height || width) {
+    style.height = height || width;
   }
 
   return <span className={`${styles.image} ${className}`} style={style}></span>;

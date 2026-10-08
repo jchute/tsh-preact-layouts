@@ -6,21 +6,7 @@ const defaultSettings = {
     dev: "../../out/program_state.json",
     prod: "../../out/program_state.json",
   },
-  images: {
-    facebook_logo: "facebook.png",
-    organizer_logo: "organizer.png",
-    twitch_logo: "twitch.png",
-    twitter_logo: "twitter.png",
-    venue_logo: "venue.png",
-    youtube_logo: "youtube.png",
-  },
-  text: {
-    banner: "",
-    facebook: "",
-    twitch: "",
-    twitter: "",
-    youtube: "",
-  },
+  images: {},
   styles: {
     dev_body: "rebeccapurple",
   },
@@ -75,11 +61,8 @@ export const getSettings = async () => {
       throw new Error("settings.json fetch failed");
     }
 
-    // Update the settings
-    const json = await response.json();
-
     // Merge with defaults
-    settings = deepMerge(defaultSettings, json);
+    settings = deepMerge(defaultSettings, await response.json());
 
     // Resolve image paths in logo settings
     if (settings.images) {

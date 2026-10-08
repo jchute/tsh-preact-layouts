@@ -5,6 +5,9 @@ import fs from "fs";
 
 const screensDir = path.resolve(__dirname, "src/Screens");
 
+const SCREENS_ID = "virtual:screens";
+const RESOLVED_SCREENS_ID = `\0${SCREENS_ID}`;
+
 /**
  * Returns the names of all directories within a parent folder.
  *
@@ -25,57 +28,22 @@ const getDirectories = (parent) => {
  *   src/Screens/
  *     Scoreboard/
  *     HeadToHead/
- *     Casters/
  *
  * The virtual module will effectively contain:
  *
  *   export { Scoreboard } from "@Screens/Scoreboard";
  *   export { HeadToHead } from "@Screens/HeadToHead";
- *   export { Casters } from "@Screens/Casters";
  *
  * This allows application code to import all screen from a single module without
  * having to manually maintain an index file.
  *
- * This module is wired into Vite's file watcher so adding, removing, or changing
- * screen directories causes the virtual module to be regenerated during
- * development.
+ * In development, adding or removing a screen invalidates the module and reloads the page.
  *
  * @returns {import("vite").Plugin} Vite plugin definition.
  */
 const ScreenVirtualModule = () => {
   return {
-    name: "jonch-screen-virtual-index",
-
-    /**
-     * Called when Vite starts a build or development server.
-     *
-     * Register the Screens directory and each existing screen directory with
-     * Vite's watcher so changes to them can invalidate the virtual module.
-     *
-     */
-    buildStart() {
-      // Watch the Screen directory so adding/removing a screen can be detected
-      this.addWatchFile(screensDir);
-
-      // Watch each individual screen directory for changes
-      for (const screen of getDirectories(screensDir)) {
-        this.addWatchFile(path.join(screensDir, screen));
-      }
-    },
-
-    /**
-     * Called by Vite when a watched file changes.
-     *
-     * If the changed file belongs to Screen, invalidate the virtual module so
-     * Vite will call `load()` again and rebuild its exports.
-     *
-     * @param {string} file Absolute path of the changed file
-     */
-    watchChange(file) {
-      if (file.startsWith(path.resolve(__dirname, "src/Screens"))) {
-        this.invalidate("virtual:screens");
-      }
-    },
+    name: "tsh-screens-virtual-index",
 
     /**
      * Resolves the virtual module's import ID.
@@ -87,7 +55,7 @@ const ScreenVirtualModule = () => {
      * @returns {string|undefined} The virtual module ID when matched.
      */
     resolveId(id) {
-      if (id === "virtual:screens") return id;
+      if (id === SCREENS_ID) return RESOLVED_SCREENS_ID;
     },
 
     /**
@@ -100,15 +68,45 @@ const ScreenVirtualModule = () => {
      * @returns {string|undefined} Generated module source.
      */
     load(id) {
-      if (id !== "virtual:screens") {
+      if (id !== RESOLVED_SCREENS_ID) {
         return;
       }
 
-      const lines = getDirectories(screensDir).map((name) => {
-        return `export { ${name} } from "@Screens/${name}"`;
-      });
+      return getDirectories(screensDir)
+        .map((name) => {
+          return `export { ${name} } from "@Screens/${name}"`;
+        })
+        .join("\n");
+    },
 
-      return lines.join("\n");
+    /**
+     * Watches for screens being added or removed while the dev server is running.
+     *
+     * Only top-level screen directories and their direct children (e.g. `Game/index.jsx`)
+     * affect the module, so deeper changes are left to normal HMR.
+     *
+     * @param {import("vite").ViteDevServer} server
+     */
+    configureServer(server) {
+      const onChange = (file) => {
+        const relative = path.relative(screensDir, file);
+
+        if (!relative || relative.startsWith("..") || relative.split(path.sep).length > 2) {
+          return;
+        }
+
+        const mod = server.moduleGraph.getModuleById(RESOLVED_SCREENS_ID);
+
+        if (mod) {
+          server.moduleGraph.invalidateModule(mod);
+        }
+
+        server.ws.send({ type: "full-reload" });
+      };
+
+      for (const event of ["add", "unlink", "addDir", "unlinkDir"]) {
+        server.watcher.on(event, onChange);
+      }
     },
   };
 };
@@ -116,34 +114,16 @@ const ScreenVirtualModule = () => {
 /**
  * Creates a Vite plugin that generates one HTML entry point per screen.
  *
- * Vite normally produces `index.html` as the application's HTML entry.
- * This plugin takes that generated HTML and creates additional files:
+ * Each generated HTML file is identical to `index.html` except that the root
+ * application element receives a `data-screen` attribute identifying its screen:
  *
- *   index.html
- *   Scoreboard.html
- *   HeadToHead.html
- *   Casters.html
- *
- * Each generated HTML file is identical to the original except that the
- * root application element receives a `data-screen` attribute identifying
- * the screen it belongs to.
- *
- * For example:
- *
- *   <div id="app">
- *
- * becomes:
- *
- *   <div id="app" data-screen="Scoreboard">
- *
- * This allows the same entry point to determine which screen should be
- * displayed based on the HTML file that loaded it.
+ *   <div id="app">  ->  <div id="app" data-screen="Scoreboard">
  *
  * @returns {import("vite").Plugin} Vite plugin definition.
  */
 const ScreenHTMLGenerator = () => {
   return {
-    name: "jonch-screen-html-generator",
+    name: "tsh-screens-html-generator",
     enforce: "post",
     apply: "build",
 
@@ -159,40 +139,23 @@ const ScreenHTMLGenerator = () => {
      * @returns
      */
     generateBundle(_, bundle) {
-      // Find the HTML entry generated by Vite
-      const indexEntry = Object.entries(bundle).find(([filename]) => filename === "index.html");
+      const index = bundle["index.html"];
 
-      if (!indexEntry) {
+      if (!index) {
         this.error("No HTML file found in bundle");
         return;
       }
 
-      const [, index] = indexEntry;
-
       const results = [];
 
       for (const screen of getDirectories(screensDir)) {
-        /**
-         * Create a copy of index.html with the screen name attached
-         * to the application's root element.
-         *
-         * The regex specifically looks for the below shape and
-         * preserves any other attributes already present.
-         *
-         *   <div ... id="app" ...>
-         */
-        const source = index.source.replace(
-          /<div([^>]*?)\s(id=["']app["'])([^>]*)>/i,
-          (_, before, idAttr, after) => {
-            // Remove an existing data-screen attribute so this plugin doesn't accidentally duplicate it
-            const cleanAttrs = `${before} ${idAttr} ${after}`.replace(
-              /\s*data-screen=["'][^"']*["']/i,
-              "",
-            );
+        // Matches `<div ... id="app" ...>`, preserving every other attribute
+        const source = index.source.replace(/<div\b([^>]*\sid=["']app["'][^>]*)>/i, (_, attrs) => {
+          // Remove an existing data-screen attribute so it isn't duplicated
+          const cleanAttrs = attrs.replace(/\s+data-screen=["'][^"']*["']/i, "").trimEnd();
 
-            return `<div${cleanAttrs}data-screen="${screen}">`;
-          },
-        );
+          return `<div${cleanAttrs} data-screen="${screen}">`;
+        });
 
         // Each screen gets its own HTML entry point.
         const fileName = `${screen}.html`;

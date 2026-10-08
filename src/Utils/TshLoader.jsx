@@ -1,10 +1,19 @@
 import { getSettings } from "./SettingsLoader";
 
-let data = {};
-let oldData = {};
+let latest = null;
+let started = false;
+
+// The most recent program_state.json payload, or null if nothing has loaded yet
+export const getLatestTSHData = () => latest;
 
 // Start listening to changes in TSH
 export const startTSHPolling = async ({ interval = 64 } = {}) => {
+  if (started) {
+    return;
+  }
+
+  started = true;
+
   // Get the Settings
   const settings = await getSettings();
 
@@ -18,39 +27,40 @@ export const startTSHPolling = async ({ interval = 64 } = {}) => {
   }
 
   // Try to pull data from TSH repeatedly
-  setInterval(async () => {
+  const poll = async () => {
     try {
-      // Store the previous result, so we only update when needed
-      oldData = data;
-
-      // Pull the data from TSG
       const response = await fetch(url, { cache: "no-store" });
 
       // If the response failed, throw error
       if (!response.ok) {
-        throw new Error("Failed to fetch TSH data");
+        throw new Error(`Failed to fetch TSH data (${response.status})`);
       }
 
-      // Update our data
-      data = await response.json();
+      const data = await response.json();
 
       // Skip if data didn't change
-      if (data.timestamp <= (oldData?.timestamp || 0)) {
+      if (latest && data.timestamp <= (latest.timestamp || 0)) {
         return;
       }
 
-      // Setup a new Event
-      const event = new CustomEvent("tsh_update", {
-        detail: {
-          data,
-          oldData,
-        },
-      });
+      const oldData = latest ?? {};
+      latest = data;
 
       // Trigger the new event
-      document.dispatchEvent(event);
+      document.dispatchEvent(
+        new CustomEvent("tsh_update", {
+          detail: {
+            data,
+            oldData,
+          },
+        }),
+      );
     } catch (e) {
       console.error("TSH polling error:", e);
+    } finally {
+      setTimeout(poll, interval);
     }
-  }, interval);
+  };
+
+  poll();
 };

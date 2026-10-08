@@ -4,22 +4,20 @@ import { ScreenLoader } from "@Utils/ScreenLoader";
 import { getSettings } from "@Utils/SettingsLoader";
 
 // Dev Mode
-getSettings().then((settings) => {
-  // Development Styles
-  if (import.meta.env.DEV) {
+if (import.meta.env.DEV) {
+  getSettings().then((settings) => {
     document.body.style.setProperty("--body", settings.styles?.dev_body);
-  }
-});
+  });
+}
 
-// Get Parameters
+// URL parameters take priority over the data attributes on #app
 const params = new URLSearchParams(window.location.search);
-
-// Preact
 const container = document.getElementById("app");
 
-const props = {
-  scoreboard: container.dataset.scoreboard,
-  screen: container.dataset.screen,
-};
-
-render(<ScreenLoader {...props} />, container);
+render(
+  <ScreenLoader
+    screen={params.get("screen") ?? container.dataset.screen}
+    scoreboard={params.get("scoreboard") ?? container.dataset.scoreboard}
+  />,
+  container,
+);

@@ -5,6 +5,9 @@ export const CharacterName = ({ team, player = 1, character = 1, ...props }) => 
   const game = useGame();
 
   return (
-    <Text value={game?.team?.[team]?.player?.[player]?.character[character]?.en_name} {...props} />
+    <Text
+      value={game?.team?.[team]?.player?.[player]?.character?.[character]?.en_name}
+      {...props}
+    />
   );
 };

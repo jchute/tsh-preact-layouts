@@ -1,6 +1,10 @@
 {
-  "baseUrl": "src",
   "compilerOptions": {
+    "baseUrl": "src",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "@Assets/*": ["/Assets/*"],
       "@Components/*": ["/Components/*"],
