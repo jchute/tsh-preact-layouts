@@ -1,5 +1,6 @@
-import { createTextField } from "../createField";
+import { createCondition, createImageField, createTextField } from "../createField";
 import { getPlayer, getTeam, getTeams, isDoubles, joinPlayerNames } from "@Utils/selectors";
+import { resolveAsset } from "@Utils/TshLoader";
 
 // Doubles shows the team name, falling back to the player names. Singles shows the player name.
 export const DisplayName = createTextField((game, { team }) => {
@@ -19,6 +20,8 @@ export const DisplayTag = createTextField((game, { team }) => {
   return getTeam(game, team)?.teamName ? joinPlayerNames(game, team) : "";
 });
 
+export const IfLosers = createCondition((game, { team }) => getTeam(game, team)?.losers);
+
 export const Score = createTextField((game, { team }) => getTeam(game, team)?.score, {
   fallback: 0,
 });
@@ -35,6 +38,11 @@ export const Side = createTextField((game, { team }) => {
     ? "W"
     : "";
 });
+
+export const TeamLogo = createImageField(
+  (game, { team }) => resolveAsset(getTeam(game, team)?.logo),
+  { mask: false },
+);
 
 export const TeamName = createTextField((game, { team }) => getTeam(game, team)?.teamName);
 

@@ -6,7 +6,7 @@ export const Round = ({ className }) => {
   return (
     <div className={cx(className, styles.round)}>
       <Match className={styles.match} />
-      <BestOf className={styles.bestof} prefix="Best of " />
+      <BestOf className={styles.bestof} variant="text" />
     </div>
   );
 };

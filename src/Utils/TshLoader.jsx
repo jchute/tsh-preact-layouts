@@ -2,9 +2,15 @@ import { getSettings } from "./SettingsLoader";
 
 let latest = null;
 let started = false;
+let assetBase = null;
 
 // The most recent program_state.json payload, or null if nothing has loaded yet
 export const getLatestTSHData = () => latest;
+
+// TSH asset paths (flags, character icons, logos) are relative to the TSH root, e.g. "./assets/..."
+export const resolveAsset = (asset) => {
+  return asset && assetBase ? new URL(asset, assetBase).href : null;
+};
 
 // Start listening to changes in TSH
 export const startTSHPolling = async ({ interval = 64 } = {}) => {
@@ -25,6 +31,9 @@ export const startTSHPolling = async ({ interval = 64 } = {}) => {
     console.error("No state file defined in settings.json");
     return;
   }
+
+  // program_state.json lives in TSH's `out/` folder, so the TSH root is one level above it
+  assetBase = new URL("../", new URL(url, window.location.href)).href;
 
   // Try to pull data from TSH repeatedly
   const poll = async () => {

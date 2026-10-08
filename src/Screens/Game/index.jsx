@@ -2,7 +2,7 @@ import styles from "./styles.module.scss";
 import { Player } from "./Player";
 import { Round } from "./Round";
 import { Screen } from "@Components/Elements/Screen";
-import { CasterName } from "@Components/TSH";
+import { MergedName } from "@Components/TSH";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
@@ -17,7 +17,7 @@ export const Game = () => {
 
       <div className={styles.casters}>
         {[1, 2].map((caster) => (
-          <CasterName
+          <MergedName
             key={caster}
             caster={caster}
             suffix={<FontAwesomeIcon className={styles.icon} icon={faMicrophone} />}

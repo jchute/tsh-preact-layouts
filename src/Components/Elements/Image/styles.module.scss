@@ -25,4 +25,13 @@
     left: 2px;
     top: 2px;
   }
+
+  &.photo {
+    background: var(--src, none) center / contain no-repeat;
+
+    &::before,
+    &::after {
+      content: none;
+    }
+  }
 }

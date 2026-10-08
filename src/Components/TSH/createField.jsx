@@ -1,3 +1,4 @@
+import { Fragment } from "preact";
 import { Image } from "@Components/Elements/Image";
 import { Text } from "@Components/Elements/Text";
 import { useGame } from "@Utils/GameContext";
@@ -25,3 +26,35 @@ const createField =
 export const createTextField = createField(Text, "value");
 
 export const createImageField = createField(Image, "source");
+
+/**
+ * Builds a component that renders its children function once per item selected from the game
+ * state, passing the 1-based index and the raw item. `limit` caps how many are rendered.
+ *
+ * @example
+ * <LastSets team={1} limit={3}>
+ *   {(set) => <LastSetOpponent team={1} set={set} />}
+ * </LastSets>
+ */
+export const createList = (select) => {
+  return ({ children, limit, ...props }) => {
+    const items = select(useGame(), props) ?? [];
+
+    return items
+      .slice(0, limit)
+      .map((item, index) => <Fragment key={index}>{children(index + 1, item)}</Fragment>);
+  };
+};
+
+/**
+ * Builds a component that renders its children only when the selected value is truthy.
+ * Pass `not` to invert it.
+ *
+ * @example
+ * <IfBirthday team={1}>🎂</IfBirthday>
+ */
+export const createCondition = (select) => {
+  return ({ children, not = false, ...props }) => {
+    return Boolean(select(useGame(), props)) !== not ? children : null;
+  };
+};
