@@ -16,16 +16,14 @@ export const Game = () => {
       </div>
 
       <div className={styles.casters}>
-        <CasterName
-          caster={1}
-          suffix={<FontAwesomeIcon className={styles.icon} icon={faMicrophone} />}
-          hide
-        />
-        <CasterName
-          caster={2}
-          suffix={<FontAwesomeIcon className={styles.icon} icon={faMicrophone} />}
-          hide
-        />
+        {[1, 2].map((caster) => (
+          <CasterName
+            key={caster}
+            caster={caster}
+            suffix={<FontAwesomeIcon className={styles.icon} icon={faMicrophone} />}
+            hide
+          />
+        ))}
       </div>
     </Screen>
   );

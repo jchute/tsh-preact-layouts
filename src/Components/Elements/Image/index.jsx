@@ -1,9 +1,10 @@
 import styles from "./styles.module.scss";
+import { cx } from "@Utils/cx";
 
-export const Image = ({ className = "", height, hide = false, source, width }) => {
+export const Image = ({ className, height, hide = false, source, width }) => {
   // Do nothing if we are hiding empty source and there is no source
   if (hide && !source) {
-    return;
+    return null;
   }
 
   const style = {};
@@ -20,5 +21,5 @@ export const Image = ({ className = "", height, hide = false, source, width }) =
     style.height = height || width;
   }
 
-  return <span className={`${styles.image} ${className}`} style={style}></span>;
+  return <span className={cx(styles.image, className)} style={style} />;
 };

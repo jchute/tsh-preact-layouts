@@ -19,7 +19,7 @@ export const Text = ({
 
   // Support formatted strings
   if (typeof format === "string") {
-    content = format.replace("{value}", () => content);
+    content = format.replaceAll("{value}", () => content);
   }
 
   // Support format functions

@@ -1,5 +1,6 @@
 import styles from "./styles.module.scss";
+import { cx } from "@Utils/cx";
 
 export const Screen = ({ children, className }) => {
-  return <div className={[styles.screen, className].filter(Boolean).join(" ")}>{children}</div>;
+  return <div className={cx(styles.screen, className)}>{children}</div>;
 };
