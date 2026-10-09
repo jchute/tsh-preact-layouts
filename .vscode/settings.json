@@ -1,7 +1,6 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
     "source.fixAll.eslint": "explicit"
   },
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
@@ -22,6 +21,16 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "scss.importAliases": {
+    "@Assets/": "/src/Assets/",
+    "@Components/": "/src/Components/",
+    "@Layouts/": "/src/Layouts/",
+    "@State/": "/src/State/",
+    "@Utils/": "/src/Utils/"
+  },
+  "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

@@ -4,16 +4,23 @@ let settings = null;
 /**
  * Default options for settings.json, used for anything the file leaves out.
  *
- * - `data_path`: where TSH's program_state.json is, relative to the page, in dev and in a build.
- * - `styles.dev_body`: page background in dev, so transparent overlays are easier to see.
+ * {
+ *   data_path: {
+ *     dev {string}: path to program_state.json,
+ *     prod {string}: path to program_state.json,
+ *   },
+ *   dev: {
+ *     showDevBackground {boolean}: whether to show a dev background, so transparent overlays are easier to see.
+ *   },
+ * }
  */
 const defaultSettings = {
   data_path: {
     dev: "../../out/program_state.json",
     prod: "../../out/program_state.json",
   },
-  styles: {
-    dev_body: "rebeccapurple",
+  dev: {
+    showDevBackground: true,
   },
 };
 

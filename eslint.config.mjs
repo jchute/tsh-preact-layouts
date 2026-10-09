@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
 import react from "eslint-plugin-react";
-import prettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default [
   { ignores: ["build/", "node_modules/"] },
@@ -25,8 +24,8 @@ export default [
     },
   },
   {
-    files: ["vite.config.js", "eslint.config.mjs"],
+    files: ["vite.config.js", "eslint.config.mjs", "plugins/**/*.js"],
+    ignores: ["plugins/layouts/runtime/**/*.js"],
     languageOptions: { globals: { ...globals.node } },
   },
-  prettierRecommended,
 ];

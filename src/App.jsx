@@ -3,14 +3,13 @@ import GameContext from "@State/GameContext";
 import { useScoreboardData } from "@State/useScoreboardData";
 
 /**
- * Renders the requested overlay layout, fed with live data from one of TSH's scoreboards.
- * Renders nothing when no layout with that name exists.
+ * Renders the requested layout, fed with live data from one of TSH's scoreboards.
  *
  * @param {object} props
- * @param {string} [props.layout] Name of a layout in src/Layouts, i.e. its folder or file name
- * (e.g. "Game"). Defaults to the first layout found.
+ * @param {string} [props.layout] Name of a layout in src/Layouts. Defaults to the first layout found.
  * @param {number|string} [props.scoreboard] Which TSH scoreboard to read, for setups streaming
- * several sets at once. Defaults to the first.
+ *                                           several sets at once. Defaults to the first.
+ * TODO: Default all components to first Scoreboard, return the full TSH data object?
  */
 export const App = ({ layout = Object.keys(layouts)[0], scoreboard }) => {
   const game = useScoreboardData(scoreboard);
@@ -18,7 +17,7 @@ export const App = ({ layout = Object.keys(layouts)[0], scoreboard }) => {
 
   return (
     <GameContext.Provider value={game}>
-      {LayoutComponent && <LayoutComponent />}
+      {LayoutComponent ? <LayoutComponent /> : <div>{`No layout found for ${layout}`}</div>}
     </GameContext.Provider>
   );
 };

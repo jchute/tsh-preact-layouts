@@ -10,7 +10,7 @@ html {
 }
 
 body {
-  background-color: var(--body, transparent);
+  background: none;
   color: colors.$text;
   margin: 0;
   font-family: fonts.$primary;
@@ -18,6 +18,16 @@ body {
   overflow: hidden;
   padding: 0;
   width: 100vw;
+
+  &.dev-background {
+    background-image: conic-gradient(
+      white 0% 25%,
+      colors.$light-gray 25% 50%,
+      white 50% 75%,
+      colors.$light-gray 75% 100%
+    );
+    background-size: 1em 1em;
+  }
 }
 
 #app {

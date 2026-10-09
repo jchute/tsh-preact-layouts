@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@Assets/*": ["./Assets/*"],
-      "@Components/*": ["./Components/*"],
-      "@Layouts/*": ["./Layouts/*"],
-      "@State/*": ["./State/*"],
-      "@Utils/*": ["./Utils/*"]
+      "@Assets/*": ["./src/Assets/*"],
+      "@Components/*": ["./src/Components/*"],
+      "@Layouts/*": ["./src/Layouts/*"],
+      "@State/*": ["./src/State/*"],
+      "@Utils/*": ["./src/Utils/*"]
     }
   },
   "include": ["src"]

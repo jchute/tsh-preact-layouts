@@ -6,7 +6,9 @@ import { getSettings } from "@State/settings";
 // Dev Mode
 if (import.meta.env.DEV) {
   getSettings().then((settings) => {
-    document.body.style.setProperty("--body", settings.styles?.dev_body);
+    if (settings.dev.showDevBackground) {
+      document.body.classList.add("dev-background");
+    }
   });
 }
 

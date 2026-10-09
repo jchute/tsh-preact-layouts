@@ -3,8 +3,6 @@ import { Player } from "./Player";
 import { Round } from "./Round";
 import { Screen } from "@Components/Elements/Screen";
 import { MergedName } from "@Components/TSH";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Overlay shown during gameplay: a scoreboard with both sides and the round between them, plus the
@@ -21,12 +19,7 @@ export const Game = () => {
 
       <div className={styles.casters}>
         {[1, 2].map((caster) => (
-          <MergedName
-            key={caster}
-            caster={caster}
-            suffix={<FontAwesomeIcon className={styles.icon} icon={faMicrophone} />}
-            hide
-          />
+          <MergedName key={caster} caster={caster} hide />
         ))}
       </div>
     </Screen>
