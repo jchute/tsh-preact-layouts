@@ -12,30 +12,129 @@ const LAYOUTS_ID = "virtual:layouts";
 /** Internal ID for the layouts index. The `\0` prefix tells other plugins not to process it. */
 const RESOLVED_LAYOUTS_ID = `\0${LAYOUTS_ID}`;
 
+/** File extensions a layout can be written in. */
+const LAYOUT_EXTENSIONS = [".jsx", ".js", ".tsx", ".ts"];
+
+/** Layout names already reported as duplicates, so each is only warned about once. */
+const reportedDuplicates = new Set();
+
 /**
- * Returns the names of all layouts within this project.
+ * Returns every layout within this project, sorted by name. A layout is any top-level entry in
+ * the layouts directory that is either:
  *
- * @returns {string[]} Names of the layouts within this project.
+ *   - a folder with an index file:  `Game/index.jsx` (or .js, .tsx, .ts)
+ *   - a single file:                `Game.jsx` (or .js, .tsx, .ts)
+ *
+ * Names starting with `_` or `.`, and files with extra dots such as `Game.test.jsx`, are skipped.
+ *
+ * @returns {{ name: string, file: string }[]} Each layout's name and its entry file, relative to
+ * the layouts directory with forward slashes.
  */
 const getLayouts = () => {
-  return fs.readdirSync(layoutsDir).filter((file) => {
-    return fs.statSync(path.join(layoutsDir, file)).isDirectory();
-  });
+  const layouts = new Map();
+
+  // Folders first, so they take priority over a file with the same name
+  const entries = fs
+    .readdirSync(layoutsDir, { withFileTypes: true })
+    .sort((a, b) => Number(b.isDirectory()) - Number(a.isDirectory()));
+
+  for (const entry of entries) {
+    // Get the extension of an layout if it's a file
+    const extension = entry.isDirectory() ? "" : path.extname(entry.name);
+
+    // Get the name of the layout
+    const name = path.basename(entry.name, extension);
+
+    // Skip files and folders starting with `_` or `.`, and files with extra dots such as `Game.test.jsx`
+    if (/^[_.]/.test(name) || name.includes(".")) {
+      continue;
+    }
+
+    // Find the index file (or component file)for the layout
+    const file = entry.isDirectory()
+      ? LAYOUT_EXTENSIONS.map((ext) => `${entry.name}/index${ext}`).find((index) =>
+          fs.existsSync(path.join(layoutsDir, index)),
+        )
+      : LAYOUT_EXTENSIONS.includes(extension) && entry.name;
+
+    if (!file) {
+      continue;
+    }
+
+    // Skip if the layout is already defined
+    if (layouts.has(name)) {
+      if (!reportedDuplicates.has(name)) {
+        reportedDuplicates.add(name);
+        console.warn(
+          `[layouts] "${name}" is defined twice; using ${layouts.get(name)}, ignoring ${file}.`,
+        );
+      }
+
+      continue;
+    }
+
+    layouts.set(name, file);
+  }
+
+  return [...layouts]
+    .map(([name, file]) => ({ name, file }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 };
 
 /**
- * Creates a Vite virtual module that exports every layout found in the layouts directory.
+ * Finds the component out of a layout module, so layouts can export however.
+ *
+ * Checks, in order:
+ *   - The default export
+ *   - The export named after the layout
+ *   - The only exported function
+ *
+ * Returns null (with a warning) when none of those match.
+ *
+ * @param {object} module The layout module's exports.
+ * @param {string} name The layout's name.
+ * @returns {Function|null} The layout component.
+ */
+const pickLayoutComponent = (module, name) => {
+  if (typeof module.default === "function") {
+    return module.default;
+  }
+
+  if (typeof module[name] === "function") {
+    return module[name];
+  }
+
+  const components = Object.values(module).filter((value) => typeof value === "function");
+
+  if (components.length === 1) {
+    return components[0];
+  }
+
+  console.warn(
+    `Layout "${name}" needs a default export, an export named "${name}", or exactly one exported component.`,
+  );
+
+  return null;
+};
+
+/**
+ * Creates a Vite virtual module whose default export maps every layout's name to its component.
  *
  * For example, if the directory contains:
  *
  *   src/Layouts/
- *     Game/
- *     HeadToHead/
+ *     Game/index.jsx      (export const Game = ...)
+ *     HeadToHead.jsx      (export default ...)
  *
  * The virtual module will effectively contain:
  *
- *   export { Game } from "@Layouts/Game";
- *   export { HeadToHead } from "@Layouts/HeadToHead";
+ *   import * as layout0 from "@Layouts/Game/index.jsx";
+ *   import * as layout1 from "@Layouts/HeadToHead.jsx";
+ *
+ *   export default {
+ *     "Game": pickLayoutComponent(layout0, "Game"),
+ *     "HeadToHead": pickLayoutComponent(layout1, "HeadToHead"),
+ *   };
  *
  * This allows the application to import all layouts from a single module without
  * having to manually maintain an index file.
@@ -75,18 +174,24 @@ const LayoutVirtualModule = () => {
         return;
       }
 
-      return getLayouts()
-        .map((name) => {
-          return `export { ${name} } from "@Layouts/${name}"`;
-        })
-        .join("\n");
+      const layouts = getLayouts();
+
+      return [
+        ...layouts.map(({ file }, index) => `import * as layout${index} from "@Layouts/${file}";`),
+        `const pickLayoutComponent = ${pickLayoutComponent.toString()};`,
+        "export default {",
+        ...layouts.map(({ name }, index) => {
+          return `  ${JSON.stringify(name)}: pickLayoutComponent(layout${index}, ${JSON.stringify(name)}),`;
+        }),
+        "};",
+      ].join("\n");
     },
 
     /**
      * Watches for layouts being added or removed while the dev server is running.
      *
-     * Only top-level layout directories and their direct children (e.g. `Game/index.jsx`)
-     * affect the module, so deeper changes are left to normal HMR.
+     * Only top-level entries (e.g. `Game.jsx` or `Game/`) and their direct children
+     * (e.g. `Game/index.jsx`) affect the module, so deeper changes are left to normal HMR.
      *
      * @param {import("vite").ViteDevServer} server The running dev server, used for its file watcher.
      */
@@ -149,7 +254,7 @@ const LayoutHTMLGenerator = () => {
 
       const results = [];
 
-      for (const layout of getLayouts()) {
+      for (const { name: layout } of getLayouts()) {
         // Matches `<div ... id="app" ...>`, preserving every other attribute
         const source = index.source.replace(/<div\b([^>]*\sid=["']app["'][^>]*)>/i, (_, attrs) => {
           // Remove an existing data-layout attribute so it isn't duplicated

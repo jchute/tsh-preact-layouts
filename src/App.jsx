@@ -1,4 +1,4 @@
-import * as Layouts from "virtual:layouts";
+import layouts from "virtual:layouts";
 import GameContext from "@State/GameContext";
 import { useScoreboardData } from "@State/useScoreboardData";
 
@@ -7,14 +7,14 @@ import { useScoreboardData } from "@State/useScoreboardData";
  * Renders nothing when no layout with that name exists.
  *
  * @param {object} props
- * @param {string} [props.layout] Name of a folder in src/Layouts, e.g. "Game". Defaults to the
- * first layout found.
+ * @param {string} [props.layout] Name of a layout in src/Layouts, i.e. its folder or file name
+ * (e.g. "Game"). Defaults to the first layout found.
  * @param {number|string} [props.scoreboard] Which TSH scoreboard to read, for setups streaming
  * several sets at once. Defaults to the first.
  */
-export const App = ({ layout = Object.keys(Layouts)[0], scoreboard }) => {
+export const App = ({ layout = Object.keys(layouts)[0], scoreboard }) => {
   const game = useScoreboardData(scoreboard);
-  const LayoutComponent = Layouts[layout] || null;
+  const LayoutComponent = layouts[layout] || null;
 
   return (
     <GameContext.Provider value={game}>
