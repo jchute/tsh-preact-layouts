@@ -35,6 +35,15 @@ export const getPlayers = (game, team) => Object.values(getTeam(game, team)?.pla
 export const getPlayer = (game, team, player = 1) => getTeam(game, team)?.player?.[player];
 
 /**
+ * Returns the caster from the game state.
+ *
+ * @param {*} game The game state.
+ * @param {integer} caster The caster index.
+ * @returns The caster from the game state.
+ */
+export const getCaster = (game, caster = 1) => game?.commentary?.[caster];
+
+/**
  * Returns a player or a caster.
  *
  * @param {*} game The game state.
@@ -42,7 +51,7 @@ export const getPlayer = (game, team, player = 1) => getTeam(game, team)?.player
  * @returns The player or caster.
  */
 export const getPerson = (game, { caster, team, player } = {}) => {
-  return caster != null ? game?.commentary?.[caster] : getPlayer(game, team, player);
+  return caster != null ? getCaster(game, caster) : getPlayer(game, team, player);
 };
 
 /**
@@ -78,16 +87,30 @@ export const getCharacters = (game, { main = false, ...person } = {}) => {
 export const isDoubles = (game, team) => getPlayers(game, team).length > 1;
 
 /**
+ * Reads a text field from a player or caster, optionally preferring the Latin-script version TSH
+ * generates for names written in other alphabets. Falls back to the original when there is none.
+ *
+ * @param {*} person The player or caster.
+ * @param {string} key The field to read, e.g. "name" or "team".
+ * @param {boolean} romanized Whether to prefer the romanized version.
+ * @returns The field's value.
+ */
+export const getRomanized = (person, key, romanized = false) => {
+  return (romanized && person?.romanized_data?.[key]) || person?.[key];
+};
+
+/**
  * Returns the player names from the team.
  *
  * @param {*} game The game state.
  * @param {integer} team The team index.
- * @param {string} separator The separator between the player names.
+ * @param {{ separator?: string, romanized?: boolean }} options The text between the names, and
+ * whether to prefer romanized names.
  * @returns The player names from the team.
  */
-export const joinPlayerNames = (game, team, separator = " / ") =>
+export const joinPlayerNames = (game, team, { separator = " / ", romanized = false } = {}) =>
   getPlayers(game, team)
-    .map((player) => player?.name)
+    .map((player) => getRomanized(player, "name", romanized))
     .filter(Boolean)
     .join(separator);
 

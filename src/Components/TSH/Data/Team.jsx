@@ -1,5 +1,12 @@
 import { createCondition, createImageField, createTextField } from "../createField";
-import { getPlayer, getTeam, getTeams, isDoubles, joinPlayerNames } from "@Utils/selectors";
+import {
+  getPlayer,
+  getRomanized,
+  getTeam,
+  getTeams,
+  isDoubles,
+  joinPlayerNames,
+} from "@Utils/selectors";
 import { resolveAsset } from "@Utils/TshLoader";
 
 /**
@@ -8,26 +15,27 @@ import { resolveAsset } from "@Utils/TshLoader";
 
 /**
  * The main name to show for a side. Doubles shows the team name, falling back to the player names.
- * Singles shows the player name.
+ * Singles shows the player name. `romanized` prefers Latin-script player names; doubles team
+ * names are always shown as typed in TSH.
  */
-export const DisplayName = createTextField((game, { team }) => {
+export const DisplayName = createTextField((game, { team, romanized }) => {
   if (!isDoubles(game, team)) {
-    return getPlayer(game, team)?.name;
+    return getRomanized(getPlayer(game, team), "name", romanized);
   }
 
-  return getTeam(game, team)?.teamName || joinPlayerNames(game, team);
+  return getTeam(game, team)?.teamName || joinPlayerNames(game, team, { romanized });
 });
 
 /**
  * Secondary line to pair with DisplayName: the sponsor in singles, or the player names when a
- * doubles team is named.
+ * doubles team is named. Takes `romanized`, like DisplayName.
  */
-export const DisplayTag = createTextField((game, { team }) => {
+export const DisplayTag = createTextField((game, { team, romanized }) => {
   if (!isDoubles(game, team)) {
-    return getPlayer(game, team)?.team;
+    return getRomanized(getPlayer(game, team), "team", romanized);
   }
 
-  return getTeam(game, team)?.teamName ? joinPlayerNames(game, team) : "";
+  return getTeam(game, team)?.teamName ? joinPlayerNames(game, team, { romanized }) : "";
 });
 
 /** Renders its children only when the side has been marked as coming from losers bracket. */
