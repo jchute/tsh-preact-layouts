@@ -1,7 +1,7 @@
 import { createContext } from "preact";
 import { useContext } from "preact/hooks";
 
-/** Shares the current scoreboard's data from TSH with every component on the screen. */
+/** Shares the current scoreboard's data from TSH with every component in the layout. */
 const GameContext = createContext(null);
 
 /**

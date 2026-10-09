@@ -16,7 +16,7 @@ const container = document.getElementById("app");
 
 render(
   <App
-    screen={params.get("screen") ?? container.dataset.screen}
+    layout={params.get("layout") ?? container.dataset.layout}
     scoreboard={params.get("scoreboard") ?? container.dataset.scoreboard}
   />,
   container,

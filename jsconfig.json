@@ -8,7 +8,7 @@
     "paths": {
       "@Assets/*": ["./Assets/*"],
       "@Components/*": ["./Components/*"],
-      "@Screens/*": ["./Screens/*"],
+      "@Layouts/*": ["./Layouts/*"],
       "@State/*": ["./State/*"],
       "@Utils/*": ["./Utils/*"]
     }
