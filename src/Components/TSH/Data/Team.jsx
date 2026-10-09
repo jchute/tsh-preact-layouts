@@ -73,9 +73,8 @@ export const Side = createTextField((game, { team }) => {
 });
 
 /** Logo image set for the side in TSH. */
-export const TeamLogo = createImageField(
-  (game, { team }) => resolveAsset(getTeam(game, team)?.logo),
-  { mask: false },
+export const TeamLogo = createImageField((game, { team }) =>
+  resolveAsset(getTeam(game, team)?.logo),
 );
 
 /** The doubles team name typed into TSH. Usually empty in singles. */

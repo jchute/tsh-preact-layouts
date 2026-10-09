@@ -38,7 +38,6 @@ export const HistoryEvent = historyField("event_name");
 /** The tournament's start.gg picture. */
 export const HistoryImage = createImageField(
   (game, { team, entry }) => getHistoryEntry(game, team, entry)?.tournament_picture,
-  { mask: false },
 );
 
 /** Where the side finished, as a number. Pair with `format={ordinal}` from @Utils/format for "17th". */

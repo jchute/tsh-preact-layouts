@@ -33,7 +33,7 @@ export const createTextField = createField(Text, "value");
 
 /**
  * Builds a component that shows a piece of game state as an image, where the selector returns the
- * image URL. Accepts every `Image` prop, such as `mask` and `width`.
+ * image URL. Accepts every `Image` prop, such as `alt` and `width`.
  */
 export const createImageField = createField(Image, "source");
 

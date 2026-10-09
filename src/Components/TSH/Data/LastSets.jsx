@@ -66,7 +66,6 @@ export const LastSetScore = createTextField((game, { team, set, separator = " - 
  */
 export const {
   Character: LastSetCharacter,
-  CharacterAsset: LastSetCharacterAsset,
   CharacterName: LastSetCharacterName,
   CharacterSkin: LastSetCharacterSkin,
   Characters: LastSetCharacters,

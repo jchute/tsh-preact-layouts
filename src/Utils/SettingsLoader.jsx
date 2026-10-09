@@ -5,7 +5,6 @@ let settings = null;
  * Default options for settings.json, used for anything the file leaves out.
  *
  * - `data_path`: where TSH's program_state.json is, relative to the page, in dev and in a build.
- * - `images`: named images for screens to use, either a filename in src/Assets/Images or a URL.
  * - `styles.dev_body`: page background in dev, so transparent overlays are easier to see.
  */
 const defaultSettings = {
@@ -13,7 +12,6 @@ const defaultSettings = {
     dev: "../../out/program_state.json",
     prod: "../../out/program_state.json",
   },
-  images: {},
   styles: {
     dev_body: "rebeccapurple",
   },
@@ -39,37 +37,11 @@ const deepMerge = (target, source) => {
   return result;
 };
 
-// Import all images from the assets/images directory
-const imageModules = import.meta.glob("@Assets/Images/*.(png|jpg|jpeg|gif|svg|webp)", {
-  eager: true,
-});
-
-/** Bundled URL for every image in src/Assets/Images, keyed by filename, e.g. "logo.png". */
-const imageMap = Object.fromEntries(
-  Object.entries(imageModules).map(([path, module]) => {
-    const filename = path.split("/").pop();
-    return [filename, module.default || module];
-  }),
-);
-
-/**
- * Turns an image from settings.json into a usable URL. Filenames of bundled images map to their
- * built URL, and anything else (e.g. an external link) is passed through as-is.
- *
- * @param {string} path A filename in src/Assets/Images, or a URL.
- * @returns {string|null} The image URL, or null when no path was given.
- */
-const resolveImagePath = (path) => {
-  if (!path) return null;
-
-  return imageMap[path] || path;
-};
-
 /**
  * Loads settings.json and fills any gaps with the defaults. The result is cached, and the
  * defaults are used alone if the file is missing or invalid.
  *
- * @returns {Promise<object>} The settings, with `images` already resolved to URLs.
+ * @returns {Promise<object>} The settings.
  */
 export const getSettings = async () => {
   if (settings) {
@@ -88,13 +60,6 @@ export const getSettings = async () => {
 
     // Merge with defaults
     settings = deepMerge(defaultSettings, await response.json());
-
-    // Resolve image paths in logo settings
-    if (settings.images) {
-      Object.keys(settings.images).forEach((key) => {
-        settings.images[key] = resolveImagePath(settings.images[key]);
-      });
-    }
   } catch (e) {
     // If an error, return the defaults
     console.error("Failed to load settings.json:", e);

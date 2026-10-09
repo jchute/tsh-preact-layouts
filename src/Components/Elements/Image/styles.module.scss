@@ -1,37 +1,9 @@
 .image {
   display: inline-block;
   height: 1em;
-  position: relative;
-  width: 1em;
+  object-fit: contain;
+}
 
-  &::before,
-  &::after {
-    background: currentColor;
-    content: "";
-    height: 100%;
-    left: 0;
-    mask-image: var(--src, none);
-    mask-position: center;
-    mask-repeat: no-repeat;
-    mask-size: contain;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: -1;
-  }
-
-  &::before {
-    background: black;
-    left: 2px;
-    top: 2px;
-  }
-
-  &.photo {
-    background: var(--src, none) center / contain no-repeat;
-
-    &::before,
-    &::after {
-      content: none;
-    }
-  }
+.empty {
+  aspect-ratio: 1;
 }
