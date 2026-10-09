@@ -6,6 +6,10 @@ import { MergedName } from "@Components/TSH";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 
+/**
+ * Overlay shown during gameplay: a scoreboard with both sides and the round between them, plus the
+ * casters' names. Casters without a name are left out.
+ */
 export const Game = () => {
   return (
     <Screen className={styles.screen}>

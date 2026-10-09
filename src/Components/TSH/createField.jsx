@@ -8,6 +8,9 @@ import { useGame } from "@Utils/GameContext";
  *
  * @param {import("preact").ComponentType} Component Element used to render the value.
  * @param {string} valueProp Prop on `Component` that receives the selected value.
+ * @returns {(select: (game: object, props: object) => any, defaults?: object) => import("preact").FunctionComponent}
+ * A factory that takes a selector, which picks the value out of the game state using the
+ * component's props, and optional default props.
  */
 const createField =
   (Component, valueProp) =>
@@ -20,11 +23,18 @@ const createField =
   };
 
 /**
+ * Builds a component that shows a piece of game state as text. Accepts every `Text` prop, such as
+ * `fallback`, `format` and `hide`.
+ *
  * @example
  * export const Seed = createTextField((game, { team, player }) => getPlayer(game, team, player)?.seed);
  */
 export const createTextField = createField(Text, "value");
 
+/**
+ * Builds a component that shows a piece of game state as an image, where the selector returns the
+ * image URL. Accepts every `Image` prop, such as `mask` and `width`.
+ */
 export const createImageField = createField(Image, "source");
 
 /**
@@ -35,6 +45,9 @@ export const createImageField = createField(Image, "source");
  * <LastSets team={1} limit={3}>
  *   {(set) => <LastSetOpponent team={1} set={set} />}
  * </LastSets>
+ *
+ * @param {(game: object, props: object) => any[]} select Picks the items out of the game state.
+ * @returns {import("preact").FunctionComponent} The list component.
  */
 export const createList = (select) => {
   return ({ children, limit, ...props }) => {
@@ -52,6 +65,9 @@ export const createList = (select) => {
  *
  * @example
  * <IfBirthday team={1}>🎂</IfBirthday>
+ *
+ * @param {(game: object, props: object) => any} select Picks the value to test from the game state.
+ * @returns {import("preact").FunctionComponent} The conditional component.
  */
 export const createCondition = (select) => {
   return ({ children, not = false, ...props }) => {

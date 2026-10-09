@@ -3,9 +3,13 @@ import preact from "@preact/preset-vite";
 import path from "path";
 import fs from "fs";
 
+/** Folder holding one subfolder per overlay screen. */
 const screensDir = path.resolve(__dirname, "src/Screens");
 
+/** Import name application code uses for the generated screen index. */
 const SCREENS_ID = "virtual:screens";
+
+/** Internal ID for the screen index. The `\0` prefix tells other plugins not to process it. */
 const RESOLVED_SCREENS_ID = `\0${SCREENS_ID}`;
 
 /**
@@ -85,7 +89,7 @@ const ScreenVirtualModule = () => {
      * Only top-level screen directories and their direct children (e.g. `Game/index.jsx`)
      * affect the module, so deeper changes are left to normal HMR.
      *
-     * @param {import("vite").ViteDevServer} server
+     * @param {import("vite").ViteDevServer} server The running dev server, used for its file watcher.
      */
     configureServer(server) {
       const onChange = (file) => {
@@ -136,7 +140,6 @@ const ScreenHTMLGenerator = () => {
      *
      * @param {object} _ Rollup output options. Unused.
      * @param {import("rollup").OutputBundle} bundle Generated bundle.
-     * @returns
      */
     generateBundle(_, bundle) {
       const index = bundle["index.html"];

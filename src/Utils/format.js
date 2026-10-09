@@ -1,3 +1,4 @@
+/** English ordinal endings for each plural category, e.g. "one" covers 1, 21, 31 ("st"). */
 const englishSuffixes = { one: "st", two: "nd", few: "rd", other: "th" };
 
 /**

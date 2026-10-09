@@ -1,3 +1,7 @@
+/**
+ * SVG filenames for characters whose names don't turn into a usable filename on their own, or
+ * that share artwork with another character (e.g. every Mii uses the same file).
+ */
 const characterMap = {
   "Banjo & Kazooie": "banjo-and-kazooie",
   "Mii Brawler": "mii-fighter",
@@ -11,11 +15,18 @@ const characterMap = {
   // Add more overrides if needed
 };
 
+/** Bundled URL for every character SVG, keyed by its path relative to this file. */
 const characterAssets = import.meta.glob("../Assets/Images/Characters/*.svg", {
   eager: true,
   import: "default",
 });
 
+/**
+ * Turns a character's name into the filename its SVG is saved under, e.g. "Dr. Mario" -> "dr-mario".
+ *
+ * @param {string} name The character's English name.
+ * @returns {string} The filename without extension.
+ */
 const normalizeCharacterName = (name = "") => {
   // If there is a mapped name, use that as is
   if (characterMap[name]) {

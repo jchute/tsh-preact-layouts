@@ -1,18 +1,39 @@
 import { getSettings } from "./SettingsLoader";
 
+/** The most recent program_state.json payload. */
 let latest = null;
+
+/** Whether polling has begun, so it only ever runs once per page. */
 let started = false;
+
+/** URL of TSH's root folder, which its asset paths are relative to. Known once polling starts. */
 let assetBase = null;
 
-// The most recent program_state.json payload, or null if nothing has loaded yet
+/**
+ * Returns the newest copy of TSH's full state, for reading data outside of a `tsh_update` event.
+ *
+ * @returns {object|null} The program_state.json payload, or null if nothing has loaded yet.
+ */
 export const getLatestTSHData = () => latest;
 
-// TSH asset paths (flags, character icons, logos) are relative to the TSH root, e.g. "./assets/..."
+/**
+ * Turns a TSH asset path (flags, character icons, logos), which is relative to the TSH root
+ * e.g. "./assets/...", into a full URL the browser can load.
+ *
+ * @param {string} [asset] The path as TSH provides it.
+ * @returns {string|null} The URL, or null if there is no path or polling hasn't started yet.
+ */
 export const resolveAsset = (asset) => {
   return asset && assetBase ? new URL(asset, assetBase).href : null;
 };
 
-// Start listening to changes in TSH
+/**
+ * Starts checking TSH's program_state.json for changes, firing a `tsh_update` event on `document`
+ * with `{ data, oldData }` whenever it is updated. Calling it again does nothing.
+ *
+ * @param {object} [options]
+ * @param {number} [options.interval] Milliseconds to wait between checks.
+ */
 export const startTSHPolling = async ({ interval = 64 } = {}) => {
   if (started) {
     return;
