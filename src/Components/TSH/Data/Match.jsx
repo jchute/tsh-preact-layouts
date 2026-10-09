@@ -19,6 +19,15 @@ export const Match = matchField("match");
 // The bracket phase, e.g. "Top 8"
 export const Phase = matchField("phase");
 
+// Number of pools in the phase
+export const PhaseGroups = matchField("num_groups");
+
+// Number of entrants in the phase
+export const PhaseSize = matchField("phase_size");
+
+// The round as a number, alongside the `Match` round name
+export const RoundNumber = matchField("round");
+
 export const SetScore = createTextField((game, { separator = " - " }) => {
   return [1, 2].map((team) => getTeam(game, team)?.score || 0).join(separator);
 });

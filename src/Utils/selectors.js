@@ -58,6 +58,17 @@ export const getCharacter = (game, { character = 1, main = false, ...person } = 
 };
 
 /**
+ * Returns every character, or every main when `main` is true, from a player or caster.
+ *
+ * @param {*} game The game state.
+ * @param {{ main?: boolean }} props Whether to return mains, plus the person props accepted by `getPerson`.
+ * @returns The characters.
+ */
+export const getCharacters = (game, { main = false, ...person } = {}) => {
+  return Object.values(getPerson(game, person)?.[main ? "mains" : "character"] ?? {});
+};
+
+/**
  * Returns true if the team is doubles.
  *
  * @param {*} game The game state.
@@ -98,6 +109,40 @@ export const getLastSets = (game, team) => Object.values(game?.last_sets?.[team]
  * @returns The set.
  */
 export const getLastSet = (game, team, set = 1) => game?.last_sets?.[team]?.[set];
+
+/**
+ * Returns the characters one side played in one of the team's most recent sets.
+ *
+ * @param {*} game The game state.
+ * @param {{ team: integer, set?: integer, opponent?: boolean }} props Which set and side to read.
+ * @returns The characters, keyed by index.
+ */
+const getLastSetCharacterMap = (game, { team, set, opponent = false } = {}) => {
+  return getLastSet(game, team, set)?.[opponent ? "oponent_char" : "player_char"]?.character;
+};
+
+/**
+ * Returns a character one side played in one of the team's most recent sets.
+ *
+ * @param {*} game The game state.
+ * @param {{ team: integer, set?: integer, opponent?: boolean, character?: integer }} props
+ * Which set, side, and character to read.
+ * @returns The character.
+ */
+export const getLastSetCharacter = (game, { character = 1, ...props } = {}) => {
+  return getLastSetCharacterMap(game, props)?.[character];
+};
+
+/**
+ * Returns every character one side played in one of the team's most recent sets.
+ *
+ * @param {*} game The game state.
+ * @param {{ team: integer, set?: integer, opponent?: boolean }} props Which set and side to read.
+ * @returns The characters.
+ */
+export const getLastSetCharacters = (game, props) => {
+  return Object.values(getLastSetCharacterMap(game, props) ?? {});
+};
 
 /**
  * Returns the team's placements at previous tournaments, newest first.

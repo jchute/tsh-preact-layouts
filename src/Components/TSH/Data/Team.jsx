@@ -22,6 +22,16 @@ export const DisplayTag = createTextField((game, { team }) => {
 
 export const IfLosers = createCondition((game, { team }) => getTeam(game, team)?.losers);
 
+// "[L]" when the team is in losers, empty otherwise
+export const LosersIndicator = createTextField((game, { team }) => {
+  return getTeam(game, team)?.losersIndicator;
+});
+
+// TSH's display name with the losers indicator, e.g. "Lamb [L]"
+export const MergedTeamName = createTextField((game, { team }) => {
+  return getTeam(game, team)?.mergedTeamName;
+});
+
 export const Score = createTextField((game, { team }) => getTeam(game, team)?.score, {
   fallback: 0,
 });
