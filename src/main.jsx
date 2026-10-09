@@ -1,7 +1,7 @@
 import "@Assets/Scss/theme.scss";
 import { render } from "preact";
-import { ScreenLoader } from "@Utils/ScreenLoader";
-import { getSettings } from "@Utils/SettingsLoader";
+import { App } from "./App";
+import { getSettings } from "@State/settings";
 
 // Dev Mode
 if (import.meta.env.DEV) {
@@ -15,7 +15,7 @@ const params = new URLSearchParams(window.location.search);
 const container = document.getElementById("app");
 
 render(
-  <ScreenLoader
+  <App
     screen={params.get("screen") ?? container.dataset.screen}
     scoreboard={params.get("scoreboard") ?? container.dataset.scoreboard}
   />,

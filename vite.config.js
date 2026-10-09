@@ -146,7 +146,6 @@ const ScreenHTMLGenerator = () => {
 
       if (!index) {
         this.error("No HTML file found in bundle");
-        return;
       }
 
       const results = [];
@@ -198,6 +197,7 @@ export default defineConfig({
       "@Assets": path.resolve(__dirname, "./src/Assets"),
       "@Components": path.resolve(__dirname, "./src/Components"),
       "@Screens": path.resolve(__dirname, "./src/Screens"),
+      "@State": path.resolve(__dirname, "./src/State"),
       "@Utils": path.resolve(__dirname, "./src/Utils"),
     },
   },

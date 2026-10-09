@@ -1,5 +1,5 @@
 import { createList, createTextField } from "../createField";
-import { getTeam } from "@Utils/selectors";
+import { getTeam } from "@State/selectors";
 
 /**
  * Builds a text component that shows one property of the current set's scoreboard data.

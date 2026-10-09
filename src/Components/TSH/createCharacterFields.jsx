@@ -1,5 +1,5 @@
 import { createImageField, createList, createTextField } from "./createField";
-import { resolveAsset } from "@Utils/TshLoader";
+import { resolveAsset } from "@State/tsh";
 
 /**
  * Builds the character components for any place TSH stores characters.

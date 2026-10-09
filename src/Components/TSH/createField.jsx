@@ -1,7 +1,7 @@
 import { Fragment } from "preact";
 import { Image } from "@Components/Elements/Image";
 import { Text } from "@Components/Elements/Text";
-import { useGame } from "@Utils/GameContext";
+import { useGame } from "@State/GameContext";
 
 /**
  * Builds a component that reads a value from the game state and renders it with `Component`.

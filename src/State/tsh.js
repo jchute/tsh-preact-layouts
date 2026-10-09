@@ -1,4 +1,4 @@
-import { getSettings } from "./SettingsLoader";
+import { getSettings } from "./settings";
 
 /** The most recent program_state.json payload. */
 let latest = null;

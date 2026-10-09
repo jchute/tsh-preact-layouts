@@ -1,5 +1,5 @@
 import { createCondition, createList, createTextField } from "../createField";
-import { getRecentSet, getRecentSets } from "@Utils/selectors";
+import { getRecentSet, getRecentSets } from "@State/selectors";
 
 /**
  * Head-to-head history: previous sets between the two sides currently playing, possibly at other

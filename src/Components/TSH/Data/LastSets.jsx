@@ -5,7 +5,7 @@ import {
   getLastSetCharacter,
   getLastSetCharacters,
   getLastSets,
-} from "@Utils/selectors";
+} from "@State/selectors";
 
 /**
  * A side's most recent sets at this tournament, i.e. their run through the bracket so far.

@@ -1,5 +1,5 @@
 import { createImageField, createList, createTextField } from "../createField";
-import { getHistory, getHistoryEntry } from "@Utils/selectors";
+import { getHistory, getHistoryEntry } from "@State/selectors";
 
 /**
  * A side's results at previous tournaments. Every component here takes `team`, and `entry`

@@ -1,4 +1,4 @@
-import { getLatestTSHData, startTSHPolling } from "@Utils/TshLoader";
+import { getLatestTSHData, startTSHPolling } from "./tsh";
 import { useEffect, useState } from "preact/hooks";
 
 /**
@@ -9,7 +9,7 @@ import { useEffect, useState } from "preact/hooks";
  * @param {number|string} scoreboard Which TSH scoreboard to read.
  * @returns {object|null} The game state, or null if no data has loaded.
  */
-const selectGame = (data, scoreboard) => {
+const buildGameState = (data, scoreboard) => {
   if (!data) {
     return null;
   }
@@ -28,15 +28,15 @@ const selectGame = (data, scoreboard) => {
  * @returns {object|null} The game state, or null until TSH's first update arrives.
  */
 export const useScoreboardData = (scoreboard = 1) => {
-  const [game, setGame] = useState(() => selectGame(getLatestTSHData(), scoreboard));
+  const [game, setGame] = useState(() => buildGameState(getLatestTSHData(), scoreboard));
 
   useEffect(() => {
     startTSHPolling();
 
     // Pick up any data that arrived before this hook subscribed
-    setGame(selectGame(getLatestTSHData(), scoreboard));
+    setGame(buildGameState(getLatestTSHData(), scoreboard));
 
-    const handler = (e) => setGame(selectGame(e.detail.data, scoreboard));
+    const handler = (e) => setGame(buildGameState(e.detail.data, scoreboard));
 
     document.addEventListener("tsh_update", handler);
     return () => document.removeEventListener("tsh_update", handler);

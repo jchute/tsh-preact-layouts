@@ -6,8 +6,8 @@ import {
   getTeams,
   isDoubles,
   joinPlayerNames,
-} from "@Utils/selectors";
-import { resolveAsset } from "@Utils/TshLoader";
+} from "@State/selectors";
+import { resolveAsset } from "@State/tsh";
 
 /**
  * Details about one side of the current set. Every component here takes `team` (1 or 2).

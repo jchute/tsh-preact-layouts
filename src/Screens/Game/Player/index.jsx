@@ -1,7 +1,7 @@
 import styles from "./styles.module.scss";
 import { DisplayName, DisplayTag, Score, Side, useGame } from "@Components/TSH";
 import { cx } from "@Utils/cx";
-import { getTeam } from "@Utils/selectors";
+import { getTeam } from "@State/selectors";
 
 /**
  * One side's half of the in-game scoreboard: score, sponsor or partner names, name and

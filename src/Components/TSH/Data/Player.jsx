@@ -1,7 +1,7 @@
 import { createCharacterFields } from "../createCharacterFields";
 import { createCondition, createImageField, createTextField } from "../createField";
-import { getCharacter, getCharacters, getPerson, getRomanized } from "@Utils/selectors";
-import { resolveAsset } from "@Utils/TshLoader";
+import { getCharacter, getCharacters, getPerson, getRomanized } from "@State/selectors";
+import { resolveAsset } from "@State/tsh";
 
 /**
  * Details about an individual competitor or commentator.
