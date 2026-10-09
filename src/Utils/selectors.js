@@ -117,3 +117,20 @@ export const getHistory = (game, team) => Object.values(game?.history_sets?.[tea
  * @returns The history entry.
  */
 export const getHistoryEntry = (game, team, entry = 1) => game?.history_sets?.[team]?.[entry];
+
+/**
+ * Returns the previous sets between the two current teams.
+ *
+ * @param {*} game The game state.
+ * @returns The head-to-head sets.
+ */
+export const getRecentSets = (game) => game?.recent_sets?.sets ?? [];
+
+/**
+ * Returns one of the previous sets between the two current teams.
+ *
+ * @param {*} game The game state.
+ * @param {integer} set The set index, starting at 1.
+ * @returns The set.
+ */
+export const getRecentSet = (game, set = 1) => getRecentSets(game)[set - 1];

@@ -29,8 +29,5 @@ export const StreamUrl = matchField("stream_url");
 
 export const UpsetFactor = matchField("upset_factor");
 
-// Head-to-head sets between the current players. Items are passed through as TSH provides them.
-export const RecentSets = createList((game) => game?.recent_sets?.sets);
-
 // Upcoming sets on this stream's station. Items are passed through as TSH provides them.
 export const StationQueue = createList((game) => Object.values(game?.station_queue ?? {}));
