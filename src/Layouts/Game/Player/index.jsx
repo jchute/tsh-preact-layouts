@@ -1,5 +1,5 @@
 import styles from "./styles.module.scss";
-import { DisplayName, DisplayTag, Score, Side, useTSH } from "@Components/TSH";
+import { DisplayName, DisplayTag, Score, Side, useSelector } from "@Components/TSH";
 import { cx } from "@Utils/cx";
 import { getTeam } from "@State/selectors";
 
@@ -13,12 +13,12 @@ import { getTeam } from "@State/selectors";
  * @param {number} props.team Which side to show (1 or 2).
  */
 export const Player = ({ className, flip = false, team }) => {
-  const { tsh, scoreboard } = useTSH();
+  const color = useSelector(getTeam, { team })?.color;
 
   return (
     <div
       className={cx(className, styles.team, flip && styles.flip)}
-      style={{ "--team-color": getTeam(tsh, team, scoreboard)?.color }}
+      style={{ "--team-color": color }}
     >
       <Score className={styles.score} team={team} />
       <DisplayTag className={styles.tag} team={team} hide />

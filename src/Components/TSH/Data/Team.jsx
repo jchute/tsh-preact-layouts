@@ -1,105 +1,105 @@
-import { createCondition, createImageField, createTextField } from "../createField";
 import {
-  getPlayer,
-  getRomanized,
+  createCondition,
+  createImageField,
+  createKeyField,
+  createList,
+  createTextField,
+} from "../createField";
+import {
+  getGamertag,
+  getPlayerNames,
+  getSponsor,
   getTeam,
+  getTeamName,
   getTeams,
-  isDoubles,
-  joinPlayerNames,
+  isSingles,
 } from "@State/selectors";
 import { resolveAsset } from "@State/tsh";
 
 /**
- * Details about one side of the current set. Every component here takes `team` (1 or 2).
+ * Details about one team. Every component here takes `team` (default 1), meaning one side of the
+ * current set. `source` reads a team from another part of TSH instead: "playerList", "bracket" or
+ * "teamBattle". A team can be a single player.
  */
 
+/** Builds a text component that shows one property of the team. */
+const teamField = createKeyField(getTeam);
+
+/** Repeats its children for each team in the `source`, passing the `team` index. */
+export const Teams = createList(getTeams);
+
 /**
- * The main name to show for a side. Doubles shows the team name, falling back to the player names.
- * Singles shows the player name. `romanized` prefers Latin-script player names; doubles team
- * names are always shown as typed in TSH.
+ * The main name to show for a team. A single player shows their gamertag. Bigger teams show the
+ * team name, or the player names when the team has no name. Takes `romanized` for player names.
  */
-export const DisplayName = createTextField((tsh, { team, romanized, scoreboard }) => {
-  if (!isDoubles(tsh, team, scoreboard)) {
-    return getRomanized(getPlayer(tsh, team, 1, scoreboard), "name", romanized);
+export const DisplayName = createTextField((tsh, props) => {
+  if (isSingles(tsh, props)) {
+    return getGamertag(tsh, props);
   }
 
-  return (
-    getTeam(tsh, team, scoreboard)?.teamName ||
-    joinPlayerNames(tsh, team, { romanized, scoreboard })
-  );
+  return getTeamName(tsh, props) || getPlayerNames(tsh, props);
 });
 
 /**
- * Secondary line to pair with DisplayName: the sponsor in singles, or the player names when a
- * doubles team is named. Takes `romanized`, like DisplayName.
+ * A second line to pair with DisplayName: the sponsor for a single player, or the player names
+ * when a bigger team has a name. Takes `romanized`.
  */
-export const DisplayTag = createTextField((tsh, { team, romanized, scoreboard }) => {
-  if (!isDoubles(tsh, team, scoreboard)) {
-    return getRomanized(getPlayer(tsh, team, 1, scoreboard), "team", romanized);
+export const DisplayTag = createTextField((tsh, props) => {
+  if (isSingles(tsh, props)) {
+    return getSponsor(tsh, props);
   }
 
-  return getTeam(tsh, team, scoreboard)?.teamName
-    ? joinPlayerNames(tsh, team, { romanized, scoreboard })
-    : "";
+  return getTeamName(tsh, props) ? getPlayerNames(tsh, props) : undefined;
 });
 
-/** Renders its children only when the side has been marked as coming from losers bracket. */
-export const IfLosers = createCondition(
-  (tsh, { team, scoreboard }) => getTeam(tsh, team, scoreboard)?.losers,
-);
+/** The team name typed into TSH. Usually empty for a single player. */
+export const TeamName = createTextField(getTeamName);
 
-/** "[L]" when the side is in losers, empty otherwise. */
-export const LosersIndicator = createTextField((tsh, { team, scoreboard }) => {
-  return getTeam(tsh, team, scoreboard)?.losersIndicator;
-});
+/** Every player's gamertag, e.g. "Jonch / Stag". Takes `romanized` and `separator`. */
+export const PlayerNames = createTextField(getPlayerNames);
 
-/** TSH's display name with the losers indicator, e.g. "GamerTag [L]". */
-export const MergedTeamName = createTextField((tsh, { team, scoreboard }) => {
-  return getTeam(tsh, team, scoreboard)?.mergedTeamName;
-});
+/** Renders its children only when the team is a single player. Use `not` for teams of 2+. */
+export const IfSingles = createCondition(isSingles);
 
-/** Games the side has won in the current set. Shows 0 before any are won. */
-export const Score = createTextField(
-  (tsh, { team, scoreboard }) => getTeam(tsh, team, scoreboard)?.score,
-  {
-    fallback: 0,
-  },
-);
+/** Games the team has won in the current set. Shows 0 before any are won. */
+export const Score = teamField("score", { fallback: 0 });
+
+/** Logo image set for the team in TSH. */
+export const TeamLogo = createImageField((tsh, props) => resolveAsset(getTeam(tsh, props)?.logo));
+
+/** Renders its children only when the team has been marked as coming from losers. */
+export const IfLosers = createCondition((tsh, props) => getTeam(tsh, props)?.losers);
+
+/** "[L]" when the team is in losers, empty otherwise. */
+export const LosersIndicator = teamField("losersIndicator");
+
+/** TSH's team name with the losers indicator, e.g. "GamerTag [L]". */
+export const MergedTeamName = teamField("mergedTeamName");
 
 /**
- * Grand-finals bracket side: "L" for the side in losers, "W" for its opponent, empty when neither
+ * Grand-finals bracket side: "L" for the team in losers, "W" for its opponent, empty when neither
  * is in losers.
  */
-export const Side = createTextField((tsh, { team, scoreboard }) => {
-  const teams = getTeams(tsh, scoreboard);
+export const Side = createTextField((tsh, { team = 1, ...props }) => {
+  const teams = getTeams(tsh, props);
 
   if (teams[team]?.losers) {
     return "L";
   }
 
-  return Object.entries(teams).some(([key, other]) => key !== String(team) && other?.losers)
-    ? "W"
-    : "";
+  return Object.values(teams).some((other) => other?.losers) ? "W" : undefined;
 });
 
-/** Logo image set for the side in TSH. */
-export const TeamLogo = createImageField((tsh, { team, scoreboard }) =>
-  resolveAsset(getTeam(tsh, team, scoreboard)?.logo),
-);
-
-/** The doubles team name typed into TSH. Usually empty in singles. */
-export const TeamName = createTextField(
-  (tsh, { team, scoreboard }) => getTeam(tsh, team, scoreboard)?.teamName,
-);
-
-/** The side's share of the games played so far in this set, e.g. "66.67%". Empty before game 1 ends. */
-export const WinRatio = createTextField((tsh, { team, scoreboard }) => {
-  const scores = Object.values(getTeams(tsh, scoreboard)).map((side) => side?.score || 0);
-  const total = scores.reduce((sum, value) => sum + value, 0);
+/** The team's share of the games played so far in this set, e.g. "66.67%". Empty before game 1 ends. */
+export const WinRatio = createTextField((tsh, props) => {
+  const total = Object.values(getTeams(tsh, props)).reduce(
+    (sum, side) => sum + (side?.score || 0),
+    0,
+  );
 
   if (total === 0) {
-    return "";
+    return undefined;
   }
 
-  return `${(((getTeam(tsh, team, scoreboard)?.score || 0) / total) * 100).toFixed(2)}%`;
+  return `${(((getTeam(tsh, props)?.score || 0) / total) * 100).toFixed(2)}%`;
 });

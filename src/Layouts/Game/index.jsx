@@ -2,11 +2,11 @@ import styles from "./styles.module.scss";
 import { Player } from "./Player";
 import { Round } from "./Round";
 import { Screen } from "@Components/Elements/Screen";
-import { MergedName } from "@Components/TSH";
+import { Commentators, MergedName } from "@Components/TSH";
 
 /**
  * Overlay shown during gameplay: a scoreboard with both sides and the round between them, plus the
- * casters' names. Casters without a name are left out.
+ * commentators' names. Commentators without a name are left out.
  */
 export const Game = () => {
   return (
@@ -18,9 +18,7 @@ export const Game = () => {
       </div>
 
       <div className={styles.casters}>
-        {[1, 2].map((caster) => (
-          <MergedName key={caster} caster={caster} hide />
-        ))}
+        <Commentators>{(commentator) => <MergedName commentator={commentator} />}</Commentators>
       </div>
     </Screen>
   );
