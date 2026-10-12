@@ -1,27 +1,32 @@
 import { createList, createTextField } from "../createField";
-import { getTeam } from "@State/selectors";
+import { getScore, getTeam } from "@State/selectors";
 
 /**
- * Builds a text component that shows one property of the current set's scoreboard data.
+ * Builds a text component that shows one property of the current TSH.score entry.
  *
- * @param {string} key Property name on TSH's scoreboard object.
+ * @param {string} key Property name on TSH's score object.
  */
-const matchField = (key) => createTextField((game) => game?.[key]);
+const matchField = (key) =>
+  createTextField((tsh, { scoreboard }) => getScore(tsh, scoreboard)?.[key]);
 
 /**
  * How many games the set can last.
  * `variant`: none for the number (5), "text" for "Best of 5", "short" for "BO5".
  */
-export const BestOf = createTextField((game, { variant }) => {
-  return game?.[{ text: "best_of_text", short: "best_of_short_text" }[variant] ?? "best_of"];
+export const BestOf = createTextField((tsh, { variant, scoreboard }) => {
+  return getScore(tsh, scoreboard)?.[
+    { text: "best_of_text", short: "best_of_short_text" }[variant] ?? "best_of"
+  ];
 });
 
 /**
  * How many game wins it takes to take the set.
  * `variant`: none for the number (3), "text" for "First to 3"`, "short" for "FT3".
  */
-export const FirstTo = createTextField((game, { variant }) => {
-  return game?.[{ text: "first_to_text", short: "first_to_short_text" }[variant] ?? "first_to"];
+export const FirstTo = createTextField((tsh, { variant, scoreboard }) => {
+  return getScore(tsh, scoreboard)?.[
+    { text: "first_to_text", short: "first_to_short_text" }[variant] ?? "first_to"
+  ];
 });
 
 /** The round being played, e.g. "Losers Quarter-Final". */
@@ -40,8 +45,8 @@ export const PhaseSize = matchField("phase_size");
 export const RoundNumber = matchField("round");
 
 /** Both sides' game wins in the current set, team 1 first, e.g. "2 - 1". */
-export const SetScore = createTextField((game, { separator = " - " }) => {
-  return [1, 2].map((team) => getTeam(game, team)?.score || 0).join(separator);
+export const SetScore = createTextField((tsh, { separator = " - ", scoreboard }) => {
+  return [1, 2].map((team) => getTeam(tsh, team, scoreboard)?.score || 0).join(separator);
 });
 
 /** The setup the set is being played on. */
@@ -54,4 +59,6 @@ export const StreamUrl = matchField("stream_url");
 export const UpsetFactor = matchField("upset_factor");
 
 /** Upcoming sets on this stream's station. Items are passed through as TSH provides them. */
-export const StationQueue = createList((game) => Object.values(game?.station_queue ?? {}));
+export const StationQueue = createList((tsh, { scoreboard }) =>
+  Object.values(getScore(tsh, scoreboard)?.station_queue ?? {}),
+);

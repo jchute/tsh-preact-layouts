@@ -7,7 +7,7 @@ let settings = null;
  * {
  *   data_path: {
  *     dev {string}: path to program_state.json,
- *     prod {string}: path to program_state.json,
+ *     build {string}: path to program_state.json,
  *   },
  *   dev: {
  *     showDevBackground {boolean}: whether to show a dev background, so transparent overlays are easier to see.
@@ -17,7 +17,7 @@ let settings = null;
 const defaultSettings = {
   data_path: {
     dev: "../../out/program_state.json",
-    prod: "../../out/program_state.json",
+    build: "../../out/program_state.json",
   },
   dev: {
     showDevBackground: true,

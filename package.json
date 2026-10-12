@@ -21,8 +21,11 @@
     "eslint": "^9.32.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^17.13.0",
+    "postcss-scss": "^4.0.9",
     "prettier": "^3.6.2",
     "sass-embedded": "^1.89.0",
+    "stylelint": "^17.16.0",
+    "stylelint-order": "^8.1.1",
     "vite": "^6.4.4"
   }
 }

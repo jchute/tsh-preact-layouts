@@ -83,15 +83,6 @@ export const getLayouts = (directory) => {
 };
 
 /**
- * Returns the absolute, forward-slashed path of a layout's entry file.
- *
- * @param {string} directory Absolute path of the folder that holds the layouts.
- * @param {string} file The layout's entry file, relative to the layouts directory.
- * @returns {string} The entry file's module path.
- */
-export const getLayoutPath = (directory, file) => normalizePath(path.join(directory, file));
-
-/**
  * Returns the export names of a layout's entry file.
  *
  * @param {import("vite").PluginContext} context The plugin context (`this` in a hook).
@@ -99,5 +90,8 @@ export const getLayoutPath = (directory, file) => normalizePath(path.join(direct
  * @param {string} file The layout's entry file, relative to the layouts directory.
  * @returns {string[]|null} The export names, or null when unknown (e.g. on the dev server).
  */
-export const getLayoutExports = (context, directory, file) =>
-  context.getModuleInfo(getLayoutPath(directory, file))?.exports ?? null;
+export const getLayoutExports = (context, directory, file) => {
+  const layoutPath = normalizePath(path.join(directory, file));
+
+  return context.getModuleInfo(layoutPath)?.exports ?? null;
+};

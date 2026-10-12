@@ -1,11 +1,8 @@
 import { normalizePath } from "vite";
 import path from "path";
 import { highlight } from "./node/log.js";
-import { getLayoutExports, getLayoutPath, getLayouts } from "./node/scanLayouts.js";
-import { findLayoutExport, layoutExportHint } from "./runtime/resolveLayoutExport.js";
-
-/** Browser-side module the generated code imports to pick each layout's component. */
-const PICKER_ID = normalizePath(path.resolve(__dirname, "runtime/resolveLayoutExport.js"));
+import { getLayoutExports, getLayouts } from "./node/scanLayouts.js";
+import { findLayoutExport } from "./runtime/resolveLayoutExport.js";
 
 /** The ID of the virtual module. */
 const LAYOUTS_ID = "virtual:layouts";
@@ -80,10 +77,17 @@ export const LayoutVirtualModule = ({ directory }) => {
       layouts = result.layouts;
       result.errors.forEach((error) => this.warn(highlight(error)));
 
+      const resolveLayoutExportPath = normalizePath(
+        path.resolve(__dirname, "runtime/resolveLayoutExport.js"),
+      );
+
+      // Write the virtual module contents
       return [
-        `import { pickLayoutComponent } from ${JSON.stringify(PICKER_ID)};`,
+        `import { pickLayoutComponent } from ${JSON.stringify(resolveLayoutExportPath)};`,
         ...layouts.map(({ file }, index) => {
-          return `import * as layout${index} from ${JSON.stringify(getLayoutPath(directory, file))};`;
+          const layoutPath = normalizePath(path.join(directory, file));
+
+          return `import * as layout${index} from ${JSON.stringify(layoutPath)};`;
         }),
         "export default {",
         ...layouts.map(({ name }, index) => {
@@ -111,7 +115,7 @@ export const LayoutVirtualModule = ({ directory }) => {
 
         this.warn(
           highlight(
-            `Layout "${name}" (${file}) may render nothing: it ${layoutExportHint(name)}. Found exports: ${found}.`,
+            `Layout "${name}" (${file}) may render nothing: it needs a default export, an export named "${name}", or exactly one exported component. Found exports: ${found}.`,
           ),
         );
       }
@@ -119,9 +123,6 @@ export const LayoutVirtualModule = ({ directory }) => {
 
     /**
      * Watches for layouts being added or removed while the dev server is running.
-     *
-     * Only top-level entries (e.g. `Game.jsx` or `Game/`) and their direct children
-     * (e.g. `Game/index.jsx`) affect the module, so deeper changes are left to normal HMR.
      *
      * @param {import("vite").ViteDevServer} server The running dev server, used for its file watcher.
      */

@@ -1,8 +1,10 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
   },
+  "stylelint.validate": ["css", "scss"],
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "prettier.requireConfig": true,
   "[javascript]": {
@@ -20,6 +22,9 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -29,8 +34,5 @@
     "@Layouts/": "/src/Layouts/",
     "@State/": "/src/State/",
     "@Utils/": "/src/Utils/"
-  },
-  "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

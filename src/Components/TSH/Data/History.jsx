@@ -12,15 +12,17 @@ import { getHistory, getHistoryEntry } from "@State/selectors";
  * @param {string} key Property name on TSH's history object.
  */
 const historyField = (key) => {
-  return createTextField((game, { team, entry }) => getHistoryEntry(game, team, entry)?.[key]);
+  return createTextField((tsh, { team, entry, scoreboard }) => {
+    return getHistoryEntry(tsh, team, entry, scoreboard)?.[key];
+  });
 };
 
 /** Repeats its children for each past tournament result, newest first. */
-export const History = createList((game, { team }) => getHistory(game, team));
+export const History = createList((tsh, { team, scoreboard }) => getHistory(tsh, team, scoreboard));
 
 /** When that tournament took place, e.g. "September 5, 2026". */
-export const HistoryDate = createTextField((game, { team, entry }) => {
-  const history = getHistoryEntry(game, team, entry);
+export const HistoryDate = createTextField((tsh, { team, entry, scoreboard }) => {
+  const history = getHistoryEntry(tsh, team, entry, scoreboard);
 
   if (!history) {
     return undefined;
@@ -36,9 +38,9 @@ export const HistoryEntrants = historyField("entrants");
 export const HistoryEvent = historyField("event_name");
 
 /** The tournament's start.gg picture. */
-export const HistoryImage = createImageField(
-  (game, { team, entry }) => getHistoryEntry(game, team, entry)?.tournament_picture,
-);
+export const HistoryImage = createImageField((tsh, { team, entry, scoreboard }) => {
+  return getHistoryEntry(tsh, team, entry, scoreboard)?.tournament_picture;
+});
 
 /** Where the side finished, as a number. Pair with `format={ordinal}` from @Utils/format for "17th". */
 export const HistoryPlacement = historyField("placement");

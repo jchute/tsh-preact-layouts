@@ -15,7 +15,7 @@ import { resolveAsset } from "@State/tsh";
  * @param {string} key Property name on TSH's player object.
  */
 const personField = (key) => {
-  return createTextField((game, props) => getPerson(game, props)?.[key]);
+  return createTextField((tsh, props) => getPerson(tsh, props)?.[key]);
 };
 
 /**
@@ -25,8 +25,8 @@ const personField = (key) => {
  * @param {string} key Property name on TSH's player object, also present in `romanized_data`.
  */
 const romanizableField = (key) => {
-  return createTextField((game, { romanized, ...props }) => {
-    return getRomanized(getPerson(game, props), key, romanized);
+  return createTextField((tsh, { romanized, ...props }) => {
+    return getRomanized(getPerson(tsh, props), key, romanized);
   });
 };
 
@@ -69,61 +69,61 @@ export const WinPercentage = personField("winPercentage");
 /**
  * Sets won and lost at this tournament, e.g. "11 - 2". `separator` changes the text between them.
  */
-export const Record = createTextField((game, { separator = " - ", ...props }) => {
-  const person = getPerson(game, props);
+export const Record = createTextField((tsh, { separator = " - ", ...props }) => {
+  const person = getPerson(tsh, props);
 
   return person?.wins != null ? `${person.wins}${separator}${person.losses ?? 0}` : undefined;
 });
 
 /** Where the person was seeded in the bracket. Empty when unseeded, since TSH uses 0 for "no seed". */
-export const Seed = createTextField((game, props) => getPerson(game, props)?.seed || undefined);
+export const Seed = createTextField((tsh, props) => getPerson(tsh, props)?.seed || undefined);
 
 /** Profile picture. A local avatar set in TSH takes priority over the start.gg one. */
-export const Avatar = createImageField((game, props) => {
-  const person = getPerson(game, props);
+export const Avatar = createImageField((tsh, props) => {
+  const person = getPerson(tsh, props);
 
   return resolveAsset(person?.avatar) || person?.online_avatar;
 });
 
 /** The country the person represents. `variant` picks the field: "name" (default), "code" or "emoji". */
-export const Country = createTextField((game, { variant = "name", ...props }) => {
-  return getPerson(game, props)?.country?.[variant];
+export const Country = createTextField((tsh, { variant = "name", ...props }) => {
+  return getPerson(tsh, props)?.country?.[variant];
 });
 
 /** Flag image for the person's country. */
-export const CountryFlag = createImageField((game, props) =>
-  resolveAsset(getPerson(game, props)?.country?.asset),
+export const CountryFlag = createImageField((tsh, props) =>
+  resolveAsset(getPerson(tsh, props)?.country?.asset),
 );
 
 /** The state, province or region within the country. `variant` picks the field: "name" (default), "code" or "emoji". */
-export const State = createTextField((game, { variant = "name", ...props }) => {
-  return getPerson(game, props)?.state?.[variant];
+export const State = createTextField((tsh, { variant = "name", ...props }) => {
+  return getPerson(tsh, props)?.state?.[variant];
 });
 
 /** Flag image for the person's state or region, when TSH has one. */
-export const StateFlag = createImageField((game, props) =>
-  resolveAsset(getPerson(game, props)?.state?.asset),
+export const StateFlag = createImageField((tsh, props) =>
+  resolveAsset(getPerson(tsh, props)?.state?.asset),
 );
 
 /** Renders its children only on the person's birthday. */
-export const IfBirthday = createCondition((game, props) => getPerson(game, props)?.birthday);
+export const IfBirthday = createCondition((tsh, props) => getPerson(tsh, props)?.birthday);
 
 /**
  * The controller the person plays on.
  * `variant` picks the field: "name" (default), "short_name", "manufacturer" or "type".
  */
-export const Controller = createTextField((game, { variant = "name", ...props }) => {
-  return getPerson(game, props)?.controller?.[variant];
+export const Controller = createTextField((tsh, { variant = "name", ...props }) => {
+  return getPerson(tsh, props)?.controller?.[variant];
 });
 
 /**
  * Picture of the person's controller.
  * `variant` picks the image: "simple" (default, small icon), "full" (photo) or "category" (e.g. pads).
  */
-export const ControllerIcon = createImageField((game, { variant = "simple", ...props }) => {
+export const ControllerIcon = createImageField((tsh, { variant = "simple", ...props }) => {
   const key = { full: "icon_path", category: "category_icon_path" }[variant] ?? "simple_icon_path";
 
-  return resolveAsset(getPerson(game, props)?.controller?.[key]);
+  return resolveAsset(getPerson(tsh, props)?.controller?.[key]);
 });
 
 /**

@@ -10,7 +10,7 @@ import { createTextField } from "../createField";
  *
  * @param {string} key Property name on TSH's tournament object.
  */
-const tournamentField = (key) => createTextField((game) => game?.tournament?.[key]);
+const tournamentField = (key) => createTextField((tsh) => tsh?.tournamentInfo?.[key]);
 
 /** When the event being streamed finishes. */
 export const EventEnd = tournamentField("eventEndAt");

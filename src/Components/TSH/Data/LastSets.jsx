@@ -19,11 +19,15 @@ import {
  * @param {string} key Property name on TSH's last-set object.
  */
 const lastSetField = (key) => {
-  return createTextField((game, { team, set }) => getLastSet(game, team, set)?.[key]);
+  return createTextField(
+    (tsh, { team, set, scoreboard }) => getLastSet(tsh, team, set, scoreboard)?.[key],
+  );
 };
 
 /** Repeats its children for each of the side's recent sets, newest first. */
-export const LastSets = createList((game, { team }) => getLastSets(game, team));
+export const LastSets = createList((tsh, { team, scoreboard }) =>
+  getLastSets(tsh, team, scoreboard),
+);
 
 /** Who the side played in that set. */
 export const LastSetOpponent = lastSetField("oponent_name");
@@ -32,8 +36,8 @@ export const LastSetOpponent = lastSetField("oponent_name");
 export const LastSetOpponentSponsor = lastSetField("oponent_team");
 
 /** The seed of who the side played. Empty when they were unseeded. */
-export const LastSetOpponentSeed = createTextField((game, { team, set }) => {
-  return getLastSet(game, team, set)?.oponent_seed || undefined;
+export const LastSetOpponentSeed = createTextField((tsh, { team, set, scoreboard }) => {
+  return getLastSet(tsh, team, set, scoreboard)?.oponent_seed || undefined;
 });
 
 /** The bracket phase the set was in, e.g. "Pools". */
@@ -43,8 +47,8 @@ export const LastSetPhase = lastSetField("phase_name");
 export const LastSetRound = lastSetField("round_name");
 
 /** Whether the side won that set: "W" or "L". */
-export const LastSetResult = createTextField((game, { team, set }) => {
-  const lastSet = getLastSet(game, team, set);
+export const LastSetResult = createTextField((tsh, { team, set, scoreboard }) => {
+  const lastSet = getLastSet(tsh, team, set, scoreboard);
 
   if (!lastSet) {
     return undefined;
@@ -54,8 +58,8 @@ export const LastSetResult = createTextField((game, { team, set }) => {
 });
 
 /** Game count for that set with the side's score first, e.g. "3 - 1". */
-export const LastSetScore = createTextField((game, { team, set, separator = " - " }) => {
-  const lastSet = getLastSet(game, team, set);
+export const LastSetScore = createTextField((tsh, { team, set, separator = " - ", scoreboard }) => {
+  const lastSet = getLastSet(tsh, team, set, scoreboard);
 
   return lastSet ? `${lastSet.player_score}${separator}${lastSet.oponent_score}` : undefined;
 });

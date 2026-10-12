@@ -6,4 +6,4 @@ export * from "./Data/RecentSets";
 export * from "./Data/Team";
 export * from "./Data/Tournament";
 export { createCondition, createImageField, createList, createTextField } from "./createField";
-export { useGame } from "@State/GameContext";
+export { Scoreboard, useTSH } from "@State/tsh";

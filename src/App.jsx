@@ -1,23 +1,25 @@
 import layouts from "virtual:layouts";
-import GameContext from "@State/GameContext";
-import { useScoreboardData } from "@State/useScoreboardData";
+import { DEFAULT_SCOREBOARD, TSHContext, useTSHPolling } from "@State/tsh";
+import { LayoutNotice } from "./Notices/LayoutNotice";
 
 /**
- * Renders the requested layout, fed with live data from one of TSH's scoreboards.
+ * Renders the requested layout with TSH's live state.
  *
  * @param {object} props
  * @param {string} [props.layout] Name of a layout in src/Layouts. Defaults to the first layout found.
- * @param {number|string} [props.scoreboard] Which TSH scoreboard to read, for setups streaming
- *                                           several sets at once. Defaults to the first.
- * TODO: Default all components to first Scoreboard, return the full TSH data object?
+ * @param {number|string} [props.scoreboard] Default TSH.score key for this page. Defaults to the first.
  */
 export const App = ({ layout = Object.keys(layouts)[0], scoreboard }) => {
-  const game = useScoreboardData(scoreboard);
-  const LayoutComponent = layouts[layout] || null;
+  const tsh = useTSHPolling();
+  const LayoutComponent = layouts[layout];
+
+  if (!LayoutComponent) {
+    return <LayoutNotice layout={layout} />;
+  }
 
   return (
-    <GameContext.Provider value={game}>
-      {LayoutComponent ? <LayoutComponent /> : <div>{`No layout found for ${layout}`}</div>}
-    </GameContext.Provider>
+    <TSHContext.Provider value={{ tsh, scoreboard: scoreboard ?? DEFAULT_SCOREBOARD }}>
+      <LayoutComponent />
+    </TSHContext.Provider>
   );
 };

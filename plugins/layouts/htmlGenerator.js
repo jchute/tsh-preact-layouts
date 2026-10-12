@@ -1,3 +1,4 @@
+import { parse } from "node-html-parser";
 import { getLayoutExports, getLayouts } from "./node/scanLayouts.js";
 import { findLayoutExport } from "./runtime/resolveLayoutExport.js";
 
@@ -43,13 +44,14 @@ export const LayoutHTMLGenerator = ({ directory }) => {
         const exports = getLayoutExports(this, directory, sourceFile);
         const layoutExport = exports && findLayoutExport(exports, layout);
 
-        // Matches `<div ... id="app" ...>`, preserving every other attribute
-        const source = index.source.replace(/<div\b([^>]*\sid=["']app["'][^>]*)>/i, (_, attrs) => {
-          // Remove an existing data-layout attribute so it isn't duplicated
-          const cleanAttrs = attrs.replace(/\s+data-layout=["'][^"']*["']/i, "").trimEnd();
+        const document = parse(index.source);
+        const app = document.querySelector("#app");
 
-          return `<div${cleanAttrs} data-layout="${layout}">`;
-        });
+        if (!app) {
+          this.error("No element with id 'app' found in index.html");
+        }
+
+        app.setAttribute("data-layout", layout);
 
         // Each layout gets its own HTML entry point.
         const fileName = `${layout}.html`;
@@ -57,7 +59,7 @@ export const LayoutHTMLGenerator = ({ directory }) => {
         this.emitFile({
           type: "asset",
           fileName,
-          source,
+          source: document.toString(),
         });
 
         results.push({

@@ -1,14 +1,4 @@
 /**
- * Shared description of how a layout module must export its component.
- * Used by the browser picker and by Node-side build warnings.
- *
- * @param {string} name The layout's name.
- * @returns {string} Hint text that follows "Layout …".
- */
-export const layoutExportHint = (name) =>
-  ` needs a default export, an export named "${name}", or exactly one exported component`;
-
-/**
  * Determines the export the browser will most likely use, from export names alone.
  *
  * This is a best guess and may not be correct.
@@ -31,7 +21,7 @@ export const findLayoutExport = (exports, name) => {
 
 /**
  * Determine the component to use within a layout module.
- * Runs in the browser: the generated `virtual:layouts` module imports this function.
+ * Runs in the browser and is able to determine the type of the exports.
  *
  * Checks, in order:
  *   - The default export
@@ -61,7 +51,9 @@ export const pickLayoutComponent = (module, name) => {
     return components[0];
   }
 
-  console.warn(`Layout "${name}" ${layoutExportHint(name)}.`);
+  console.warn(
+    `Layout "${name}" needs a default export, an export named "${name}", or exactly one exported component.`,
+  );
 
   return null;
 };
