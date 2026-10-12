@@ -18,11 +18,11 @@
   aspect-ratio: 1;
   background-color: white;
   color: black;
-  font-size: 1.5vw;
   display: grid;
+  font-size: 1.5vw;
   grid-area: score;
-  place-items: center;
   padding: 0.5em;
+  place-items: center;
 }
 
 .side {
@@ -46,12 +46,12 @@
   display: grid;
   font-size: 1.6875em;
   gap: 0 0.5em;
-  line-height: 1;
-  padding-right: 0.5em;
   grid-template-areas:
     "score . side"
     "score . side";
   grid-template-columns: auto 1fr auto;
+  line-height: 1;
+  padding-right: 0.5em;
 
   &.flip {
     grid-template-areas:
