@@ -1,5 +1,5 @@
 import layouts from "virtual:layouts";
-import { DEFAULT_SCOREBOARD, TSHContext, useTSHPolling } from "@State/tsh";
+import { TSHContext, useTSHPolling } from "@State/tsh";
 import { LayoutNotice } from "./Notices/LayoutNotice";
 
 /**
@@ -7,9 +7,10 @@ import { LayoutNotice } from "./Notices/LayoutNotice";
  *
  * @param {object} props
  * @param {string} [props.layout] Name of a layout in src/Layouts. Defaults to the first layout found.
- * @param {number|string} [props.scoreboard] Default TSH.score key for this page. Defaults to the first.
+ * @param {object} [props.scope] Page-wide picking props, e.g. `{ scoreboard: 2 }`. Anything left out
+ * uses `DEFAULTS`.
  */
-export const App = ({ layout = Object.keys(layouts)[0], scoreboard }) => {
+export const App = ({ layout = Object.keys(layouts)[0], scope = {} }) => {
   const tsh = useTSHPolling();
   const LayoutComponent = layouts[layout];
 
@@ -18,7 +19,7 @@ export const App = ({ layout = Object.keys(layouts)[0], scoreboard }) => {
   }
 
   return (
-    <TSHContext.Provider value={{ tsh, scoreboard: scoreboard ?? DEFAULT_SCOREBOARD }}>
+    <TSHContext.Provider value={{ tsh, scope }}>
       <LayoutComponent />
     </TSHContext.Provider>
   );

@@ -1,3 +1,4 @@
+import { DEFAULTS } from "./defaults";
 import { getScore } from "./score";
 
 /**
@@ -15,7 +16,7 @@ import { getScore } from "./score";
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
  * @returns {object} The sets, keyed by index.
  */
-export const getLastSets = (tsh, { team = 1, ...props } = {}) =>
+export const getLastSets = (tsh, { team = DEFAULTS.team, ...props } = {}) =>
   getScore(tsh, props)?.last_sets?.[team] ?? {};
 
 /**
@@ -28,7 +29,8 @@ export const getLastSets = (tsh, { team = 1, ...props } = {}) =>
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
  * @returns {object|undefined} The set.
  */
-export const getLastSet = (tsh, { lastSet = 1, ...props } = {}) => getLastSets(tsh, props)[lastSet];
+export const getLastSet = (tsh, { lastSet = DEFAULTS.lastSet, ...props } = {}) =>
+  getLastSets(tsh, props)[lastSet];
 
 /**
  * Returns a team's placements at past tournaments, newest first.
@@ -39,7 +41,7 @@ export const getLastSet = (tsh, { lastSet = 1, ...props } = {}) => getLastSets(t
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
  * @returns {object} The placements, keyed by index.
  */
-export const getHistory = (tsh, { team = 1, ...props } = {}) =>
+export const getHistory = (tsh, { team = DEFAULTS.team, ...props } = {}) =>
   getScore(tsh, props)?.history_sets?.[team] ?? {};
 
 /**
@@ -52,7 +54,7 @@ export const getHistory = (tsh, { team = 1, ...props } = {}) =>
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
  * @returns {object|undefined} The placement.
  */
-export const getHistoryEntry = (tsh, { historyEntry = 1, ...props } = {}) =>
+export const getHistoryEntry = (tsh, { historyEntry = DEFAULTS.historyEntry, ...props } = {}) =>
   getHistory(tsh, props)[historyEntry];
 
 /**
@@ -75,7 +77,7 @@ export const getRecentSets = (tsh, props) => getScore(tsh, props)?.recent_sets?.
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
  * @returns {object|undefined} The set.
  */
-export const getRecentSet = (tsh, { recentSet = 0, ...props } = {}) =>
+export const getRecentSet = (tsh, { recentSet = DEFAULTS.recentSet, ...props } = {}) =>
   getRecentSets(tsh, props)[recentSet];
 
 /**
@@ -94,15 +96,29 @@ export const getCompletedSets = (tsh) => tsh?.completed_sets ?? {};
  * @param {number|string} [props.completedSet] Which set. Defaults to 1.
  * @returns {object|undefined} The set.
  */
-export const getCompletedSet = (tsh, { completedSet = 1 } = {}) =>
+export const getCompletedSet = (tsh, { completedSet = DEFAULTS.completedSet } = {}) =>
   getCompletedSets(tsh)[completedSet];
 
 /**
- * Returns the upcoming sets on the scoreboard's station, as TSH provides them.
+ * Returns the upcoming sets on the scoreboard's station, after the one being played. Sets TSH
+ * couldn't load are left empty.
  *
  * @param {object|null} tsh The program_state.json payload.
  * @param {object} [props]
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
- * @returns {object} The queued sets, keyed by index.
+ * @returns {object} The queued sets, keyed by index starting at 1.
  */
 export const getStationQueue = (tsh, props) => getScore(tsh, props)?.station_queue ?? {};
+
+/**
+ * Returns one upcoming set on the scoreboard's station: its round, phase, best of, station and
+ * `team`s, which have the same shape as the scoreboard's.
+ *
+ * @param {object|null} tsh The program_state.json payload.
+ * @param {object} [props]
+ * @param {number|string} [props.queuedSet] Which set, 1 being the next. Defaults to 1.
+ * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
+ * @returns {object|null|undefined} The set.
+ */
+export const getQueuedSet = (tsh, { queuedSet = DEFAULTS.queuedSet, ...props } = {}) =>
+  getStationQueue(tsh, props)[queuedSet];

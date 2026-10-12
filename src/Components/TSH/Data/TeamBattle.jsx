@@ -1,5 +1,5 @@
 import { createKeyField, createTextField } from "../createField";
-import { getTeamBattle } from "@State/selectors";
+import { DEFAULTS, getTeamBattle } from "@State/selectors";
 
 /**
  * TSH's team battle (crew battle). The teams and their players are shown with the team and person
@@ -21,5 +21,5 @@ export const TeamBattlePhase = teamBattleField("phase");
 
 /** A team's total score in the battle, e.g. stocks remaining. Takes `team` (1 or 2). */
 export const TeamBattleScore = createTextField(
-  (tsh, { team = 1 }) => getTeamBattle(tsh)?.[`team${team}_total-score`],
+  (tsh, { team = DEFAULTS.team }) => getTeamBattle(tsh)?.[`team${team}_total-score`],
 );

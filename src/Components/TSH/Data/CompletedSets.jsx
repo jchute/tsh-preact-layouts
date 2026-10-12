@@ -1,5 +1,6 @@
-import { createKeyField, createList, createTextField } from "../createField";
+import { createKeyField, createList, createScope, createTextField } from "../createField";
 import { getCompletedSet, getCompletedSets } from "@State/selectors";
+import { joinScores } from "@Utils/format";
 
 /**
  * Sets TSH has recorded as completed, such as for a results ticker. Every component here takes
@@ -21,6 +22,9 @@ const sideField = (key) => {
   });
 };
 
+/** Sets `completedSet` for everything inside. Takes `loser` too. */
+export const CompletedSet = createScope("completedSet");
+
 /** Repeats its children for each completed set, newest first, passing the `completedSet` index. */
 export const CompletedSets = createList(getCompletedSets);
 
@@ -40,5 +44,5 @@ export const CompletedSetRound = completedSetField("round_name");
 export const CompletedSetScore = createTextField((tsh, { separator = " - ", ...props }) => {
   const set = getCompletedSet(tsh, props);
 
-  return set ? `${set.winner_score}${separator}${set.loser_score}` : undefined;
+  return joinScores([set?.winner_score, set?.loser_score], separator);
 });

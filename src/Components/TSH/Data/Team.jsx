@@ -3,9 +3,11 @@ import {
   createImageField,
   createKeyField,
   createList,
+  createScope,
   createTextField,
 } from "../createField";
 import {
+  DEFAULTS,
   getGamertag,
   getPlayerNames,
   getSponsor,
@@ -18,12 +20,15 @@ import { resolveAsset } from "@State/tsh";
 
 /**
  * Details about one team. Every component here takes `team` (default 1), meaning one side of the
- * current set. `source` reads a team from another part of TSH instead: "playerList", "bracket" or
- * "teamBattle". A team can be a single player.
+ * current set. `source` reads a team from another part of TSH instead: "playerList", "bracket",
+ * "teamBattle" or "stationQueue". A team can be a single player.
  */
 
 /** Builds a text component that shows one property of the team. */
 const teamField = createKeyField(getTeam);
+
+/** Sets `team` for everything inside. Takes `source` too. */
+export const Team = createScope("team");
 
 /** Repeats its children for each team in the `source`, passing the `team` index. */
 export const Teams = createList(getTeams);
@@ -80,7 +85,7 @@ export const MergedTeamName = teamField("mergedTeamName");
  * Grand-finals bracket side: "L" for the team in losers, "W" for its opponent, empty when neither
  * is in losers.
  */
-export const Side = createTextField((tsh, { team = 1, ...props }) => {
+export const Side = createTextField((tsh, { team = DEFAULTS.team, ...props }) => {
   const teams = getTeams(tsh, props);
 
   if (teams[team]?.losers) {

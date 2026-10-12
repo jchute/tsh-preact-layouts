@@ -48,9 +48,7 @@ export const LayoutNotice = ({ layout }) => {
         <ul>
           {names.map((name) => (
             <li key={name}>
-              <LayoutLink name={name}>
-                <code>{name}</code>
-              </LayoutLink>
+              <LayoutLink name={name} />
             </li>
           ))}
         </ul>

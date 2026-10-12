@@ -1,5 +1,17 @@
-import { createImageField, createKeyField, createList, createTextField } from "../createField";
+import {
+  createImageField,
+  createKeyField,
+  createList,
+  createScope,
+  createTextField,
+} from "../createField";
 import { getHistory, getHistoryEntry } from "@State/selectors";
+import { formatDate } from "@Utils/format";
+
+/** English month names, which TSH uses to store history dates. */
+const months = Array.from({ length: 12 }, (_, month) =>
+  new Date(2000, month).toLocaleDateString("en-US", { month: "long" }),
+);
 
 /**
  * A team's results at past tournaments.
@@ -8,6 +20,9 @@ import { getHistory, getHistoryEntry } from "@State/selectors";
 
 /** Builds a text component that shows one property of the result. */
 const historyField = createKeyField(getHistoryEntry);
+
+/** Sets `historyEntry` for everything inside. */
+export const HistoryEntry = createScope("historyEntry");
 
 /** Repeats its children for each past result, newest first, passing the `historyEntry` index. */
 export const History = createList(getHistory);
@@ -24,15 +39,19 @@ export const HistoryPlacement = historyField("placement");
 /** How many people entered that event. */
 export const HistoryEntrants = historyField("entrants");
 
-/** When that tournament took place, e.g. "September 5, 2026". */
-export const HistoryDate = createTextField((tsh, props) => {
+/** When that tournament took place. `locale` sets the date language, e.g. "September 5, 2026" for "en-US". */
+export const HistoryDate = createTextField((tsh, { locale, ...props }) => {
   const entry = getHistoryEntry(tsh, props);
+  const month = months.indexOf(entry?.event_date_month);
 
-  if (!entry) {
+  if (month < 0) {
     return undefined;
   }
 
-  return `${entry.event_date_month} ${Number(entry.event_date_day)}, ${entry.event_date_year}`;
+  return formatDate(
+    new Date(Number(entry.event_date_year), month, Number(entry.event_date_day)),
+    locale,
+  );
 });
 
 /** The tournament's start.gg picture. */

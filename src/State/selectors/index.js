@@ -7,6 +7,7 @@
  */
 export * from "./bracket";
 export * from "./characters";
+export * from "./defaults";
 export * from "./general";
 export * from "./people";
 export * from "./score";

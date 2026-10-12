@@ -34,3 +34,33 @@ export const createOrdinal = (locale = "en-US", suffixes = englishSuffixes) => {
  * Use `createOrdinal` for other languages.
  */
 export const ordinal = createOrdinal();
+
+/**
+ * Formats a date as text, e.g. "October 3, 2026" for "en-US".
+ *
+ * @param {Date|number} [date] A Date, or a Unix timestamp in seconds as TSH provides them.
+ * @param {string} [locale] BCP 47 locale code, e.g. "en-US".
+ * @returns {string|undefined} The date, or undefined when there isn't a valid one.
+ */
+export const formatDate = (date, locale = "en-US") => {
+  const value = typeof date === "number" && date > 0 ? new Date(date * 1000) : date;
+
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+    return undefined;
+  }
+
+  return value.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+};
+
+/**
+ * Joins scores with a separator, e.g. [3, 1] -> "3 - 1".
+ *
+ * @param {Array} scores The scores, in the order to show them.
+ * @param {string} separator Text between the scores.
+ * @returns {string|undefined} The joined scores, or undefined when any of them is missing.
+ */
+export const joinScores = (scores, separator) => {
+  return scores.every((score) => score != null && score !== "")
+    ? scores.join(separator)
+    : undefined;
+};

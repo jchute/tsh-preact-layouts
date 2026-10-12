@@ -1,4 +1,4 @@
-import { createImageField, createList, createTextField } from "../createField";
+import { createImageField, createList, createScope, createTextField } from "../createField";
 import { getCharacter, getCharacters } from "@State/selectors";
 import { resolveAsset } from "@State/tsh";
 
@@ -11,6 +11,9 @@ import { resolveAsset } from "@State/tsh";
  * - `team` and `lastSet`: the characters the team played in one of its previous sets. Add
  *   `opponent` for the other side's characters.
  */
+
+/** Sets `character` for everything inside. Takes `main`, `lastSet` and `opponent` too. */
+export const Character = createScope("character");
 
 /** Repeats its children for each character, passing the `character` index. Skips empty slots. */
 export const Characters = createList(getCharacters, { skip: (character) => !character?.name });
@@ -27,7 +30,7 @@ export const CharacterName = createTextField((tsh, props) => {
  * e.g. "base_files/icon" or "full", and defaults to the first one. Set it explicitly, since TSH
  * doesn't list packs in the same order everywhere.
  */
-export const Character = createImageField((tsh, { asset, ...props }) => {
+export const CharacterImage = createImageField((tsh, { asset, ...props }) => {
   const assets = getCharacter(tsh, props)?.assets ?? {};
 
   return resolveAsset((asset ? assets[asset] : Object.values(assets)[0])?.asset);

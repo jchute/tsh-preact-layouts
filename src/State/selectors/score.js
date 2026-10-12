@@ -1,4 +1,4 @@
-import { DEFAULT_SCOREBOARD } from "../tsh";
+import { DEFAULTS } from "./defaults";
 
 /**
  * TSH.score:
@@ -19,7 +19,8 @@ import { DEFAULT_SCOREBOARD } from "../tsh";
  * @param {number|string} [props.scoreboard] Which scoreboard. Defaults to the first.
  * @returns {object|undefined} The scoreboard.
  */
-export const getScore = (tsh, { scoreboard = DEFAULT_SCOREBOARD } = {}) => tsh?.score?.[scoreboard];
+export const getScore = (tsh, { scoreboard = DEFAULTS.scoreboard } = {}) =>
+  tsh?.score?.[scoreboard];
 
 /**
  * Returns the ruleset selected in TSH: its name, stage lists, ban count and so on.
@@ -59,4 +60,5 @@ export const getStages = (tsh, { counterpick = false, all = false } = {}) => {
  * @param {boolean} [props.counterpick] Whether to read the counterpick list.
  * @returns {object|undefined} The stage.
  */
-export const getStage = (tsh, { stage = 0, ...props } = {}) => getStages(tsh, props)[stage];
+export const getStage = (tsh, { stage = DEFAULTS.stage, ...props } = {}) =>
+  getStages(tsh, props)[stage];

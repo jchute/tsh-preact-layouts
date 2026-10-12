@@ -1,20 +1,41 @@
 import { Fragment } from "preact";
 import { Image } from "@Components/Elements/Image";
 import { Text } from "@Components/Elements/Text";
-import { useTSH } from "@State/tsh";
+import { TSHContext, useTSH } from "@State/tsh";
 
 /**
- * Factories that turn a selector into a component. Each TSH component is one of four kinds:
+ * Factories that turn a selector into a component. Each TSH component is one of five kinds:
  *
  * - Text field: shows a value as text. Accepts every `Text` prop (`fallback`, `format`, `hide`...).
  * - Image field: shows an image URL. Accepts every `Image` prop (`alt`, `width`, `hide`...).
  * - List: calls its children function once per item. Accepts `limit`.
  * - Condition: renders its children only when a value is truthy. Accepts `not` to invert it.
+ * - Scope: sets a prop, such as `team`, for every component inside it.
  */
 
 /**
- * Runs a selector against the live TSH data, filling in the page's default scoreboard when `props`
- * doesn't name one. Use it in layouts for values that aren't shown as text, like a team's color.
+ * Combines the scope with a component's own props. Props left undefined keep the scope's value.
+ *
+ * @param {object} scope The scope's props.
+ * @param {object} props The component's props.
+ * @returns {object} The combined props.
+ */
+const withScope = (scope, props) => {
+  const result = { ...scope };
+
+  for (const key in props) {
+    if (props[key] !== undefined) {
+      result[key] = props[key];
+    }
+  }
+
+  return result;
+};
+
+/**
+ * Runs a selector against the live TSH data, filling in any props `props` leaves out from the
+ * surrounding scope (`<Scoreboard>`, `<Team>`...). Use it in layouts for values that aren't shown
+ * as text, like a team's color.
  *
  * @example
  * const color = useSelector(getTeam, { team: 1 })?.color;
@@ -24,10 +45,41 @@ import { useTSH } from "@State/tsh";
  * @returns {*} Whatever the selector returns.
  */
 export const useSelector = (select, props = {}) => {
-  const { tsh, scoreboard } = useTSH();
+  const { tsh, scope } = useTSH();
 
-  return select(tsh, { ...props, scoreboard: props.scoreboard ?? scoreboard });
+  return select(tsh, withScope(scope, props));
 };
+
+/**
+ * Builds a component that sets `key` for every component inside it, so they don't each need it.
+ * Its other props, like `source`, `losers` or `opponent`, are set alongside. Components inside can
+ * still pass their own value. Renders its children unchanged when `key` isn't given.
+ *
+ * @example
+ * export const Team = createScope("team");
+ *
+ * <Team team={2}>
+ *   <DisplayName />
+ *   <Score />
+ * </Team>
+ *
+ * @param {string} key The prop the scope is named after, e.g. "team".
+ */
+export const createScope =
+  (key) =>
+  ({ children, ...props }) => {
+    const { tsh, scope } = useTSH();
+
+    if (props[key] == null) {
+      return children;
+    }
+
+    return (
+      <TSHContext.Provider value={{ tsh, scope: withScope(scope, props) }}>
+        {children}
+      </TSHContext.Provider>
+    );
+  };
 
 /**
  * Builds a field factory for an element that displays a value.

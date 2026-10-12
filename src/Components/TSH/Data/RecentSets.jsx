@@ -1,5 +1,12 @@
-import { createCondition, createKeyField, createList, createTextField } from "../createField";
-import { getRecentSet, getRecentSets, getScore } from "@State/selectors";
+import {
+  createCondition,
+  createKeyField,
+  createList,
+  createScope,
+  createTextField,
+} from "../createField";
+import { DEFAULTS, getRecentSet, getRecentSets, getScore } from "@State/selectors";
+import { formatDate, joinScores } from "@Utils/format";
 
 /**
  * Head-to-head history: previous sets between the two teams currently playing, possibly at other
@@ -19,6 +26,9 @@ const recentSetField = createKeyField(getRecentSet);
  */
 const fromTeam = (pair, team) => (Number(team) === 2 ? [...pair].reverse() : pair);
 
+/** Sets `recentSet` for everything inside. */
+export const RecentSet = createScope("recentSet");
+
 /** Repeats its children for each previous set between the teams, passing the `recentSet` index. */
 export const RecentSets = createList(getRecentSets);
 
@@ -31,17 +41,19 @@ export const IfRecentSetsLoading = createCondition((tsh, props) => {
 });
 
 /** Overall head-to-head record from `team`'s point of view, e.g. "3 - 1". Takes `separator`. */
-export const HeadToHead = createTextField((tsh, { team = 1, separator = " - ", ...props }) => {
-  const sets = Object.values(getRecentSets(tsh, props));
+export const HeadToHead = createTextField(
+  (tsh, { team = DEFAULTS.team, separator = " - ", ...props }) => {
+    const sets = Object.values(getRecentSets(tsh, props));
 
-  if (sets.length === 0) {
-    return undefined;
-  }
+    if (sets.length === 0) {
+      return undefined;
+    }
 
-  const wins = [0, 1].map((winner) => sets.filter((set) => set?.winner === winner).length);
+    const wins = [0, 1].map((winner) => sets.filter((set) => set?.winner === winner).length);
 
-  return fromTeam(wins, team).join(separator);
-});
+    return fromTeam(wins, team).join(separator);
+  },
+);
 
 /** The tournament that set was played at. */
 export const RecentSetTournament = recentSetField("tournament");
@@ -56,22 +68,12 @@ export const RecentSetPhase = recentSetField("phase_name");
 export const RecentSetRound = recentSetField("round");
 
 /** When that set was played. `locale` sets the date language, e.g. "October 3, 2026" for "en-US". */
-export const RecentSetDate = createTextField((tsh, { locale = "en-US", ...props }) => {
-  const timestamp = getRecentSet(tsh, props)?.timestamp;
-
-  if (!timestamp) {
-    return undefined;
-  }
-
-  return new Date(timestamp * 1000).toLocaleDateString(locale, {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+export const RecentSetDate = createTextField((tsh, { locale, ...props }) => {
+  return formatDate(getRecentSet(tsh, props)?.timestamp, locale);
 });
 
 /** Whether `team` won that set: "W" or "L". */
-export const RecentSetResult = createTextField((tsh, { team = 1, ...props }) => {
+export const RecentSetResult = createTextField((tsh, { team = DEFAULTS.team, ...props }) => {
   const winner = getRecentSet(tsh, props)?.winner;
 
   if (winner == null || winner < 0) {
@@ -82,11 +84,13 @@ export const RecentSetResult = createTextField((tsh, { team = 1, ...props }) => 
 });
 
 /** Game count for that set from `team`'s point of view, e.g. "2 - 0". Takes `separator`. */
-export const RecentSetScore = createTextField((tsh, { team = 1, separator = " - ", ...props }) => {
-  const score = getRecentSet(tsh, props)?.score;
+export const RecentSetScore = createTextField(
+  (tsh, { team = DEFAULTS.team, separator = " - ", ...props }) => {
+    const score = getRecentSet(tsh, props)?.score;
 
-  return score ? fromTeam(score, team).join(separator) : undefined;
-});
+    return Array.isArray(score) ? joinScores(fromTeam(score, team), separator) : undefined;
+  },
+);
 
 /** Renders its children only when that set was played online rather than in person. */
 export const IfRecentSetOnline = createCondition((tsh, props) => getRecentSet(tsh, props)?.online);

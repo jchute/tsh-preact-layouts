@@ -1,4 +1,6 @@
+import { DEFAULTS } from "./defaults";
 import { getScore } from "./score";
+import { getQueuedSet } from "./sets";
 
 /**
  * Teams, players and commentators.
@@ -10,19 +12,22 @@ import { getScore } from "./score";
  * - "playerList": the slots in TSH's player list.
  * - "bracket": the seeded slots in TSH's bracket.
  * - "teamBattle": the teams in TSH's team battle.
+ * - "stationQueue": the two sides of an upcoming set on the station, picked with `queuedSet`.
  *
  * Commentators share the player shape too, so `getPerson` returns either one.
  */
 
 /**
- * @typedef {"scoreboard"|"playerList"|"bracket"|"teamBattle"} TeamSource
+ * @typedef {"scoreboard"|"playerList"|"bracket"|"teamBattle"|"stationQueue"} TeamSource
  */
 
 /**
  * @typedef {object} TeamProps
  * @property {number} [team] Which team, starting at 1. Defaults to 1.
  * @property {TeamSource} [source] Which part of TSH to read. Defaults to "scoreboard".
- * @property {number|string} [scoreboard] Which scoreboard, when `source` is "scoreboard".
+ * @property {number|string} [scoreboard] Which scoreboard, when `source` is "scoreboard" or
+ * "stationQueue".
+ * @property {number|string} [queuedSet] Which upcoming set, when `source` is "stationQueue".
  */
 
 /**
@@ -37,6 +42,7 @@ const teamSources = {
   playerList: (tsh) => tsh?.player_list?.slot,
   bracket: (tsh) => tsh?.bracket?.players?.slot,
   teamBattle: (tsh) => tsh?.team_battle?.team,
+  stationQueue: (tsh, props) => getQueuedSet(tsh, props)?.team,
 };
 
 /**
@@ -57,7 +63,7 @@ export const getTeams = (tsh, { source = "scoreboard", ...props } = {}) => {
  * @param {TeamProps} [props]
  * @returns {object|undefined} The team.
  */
-export const getTeam = (tsh, { team = 1, ...props } = {}) => getTeams(tsh, props)[team];
+export const getTeam = (tsh, { team = DEFAULTS.team, ...props } = {}) => getTeams(tsh, props)[team];
 
 /**
  * Returns a team's name. Each source keeps it in a different field: `teamName` on the scoreboard,
@@ -90,7 +96,8 @@ export const getPlayers = (tsh, props) => getTeam(tsh, props)?.player ?? {};
  * at 1. Defaults to 1.
  * @returns {object|undefined} The player.
  */
-export const getPlayer = (tsh, { player = 1, ...props } = {}) => getPlayers(tsh, props)[player];
+export const getPlayer = (tsh, { player = DEFAULTS.player, ...props } = {}) =>
+  getPlayers(tsh, props)[player];
 
 /**
  * Returns true when a team has a single player.
@@ -117,7 +124,7 @@ export const getCommentators = (tsh) => tsh?.commentary ?? {};
  * @param {number|string} [props.commentator] Which commentator. Defaults to 1.
  * @returns {object|undefined} The commentator.
  */
-export const getCommentator = (tsh, { commentator = 1 } = {}) => {
+export const getCommentator = (tsh, { commentator = DEFAULTS.commentator } = {}) => {
   return getCommentators(tsh)[commentator];
 };
 

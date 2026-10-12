@@ -1,3 +1,4 @@
+import { DEFAULTS } from "./defaults";
 import { getPerson } from "./people";
 import { getLastSet } from "./sets";
 
@@ -44,6 +45,6 @@ export const getCharacters = (tsh, { main = false, lastSet, opponent = false, ..
  * @param {CharacterSourceProps & { character?: number }} [props] `character` starts at 1.
  * @returns {object|undefined} The character.
  */
-export const getCharacter = (tsh, { character = 1, ...props } = {}) => {
+export const getCharacter = (tsh, { character = DEFAULTS.character, ...props } = {}) => {
   return getCharacters(tsh, props)[character];
 };

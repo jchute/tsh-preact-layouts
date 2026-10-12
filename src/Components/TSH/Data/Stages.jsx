@@ -1,4 +1,4 @@
-import { createKeyField, createList, createTextField } from "../createField";
+import { createKeyField, createList, createScope, createTextField } from "../createField";
 import { getRuleset, getStage, getStages } from "@State/selectors";
 
 /**
@@ -8,6 +8,9 @@ import { getRuleset, getStage, getStages } from "@State/selectors";
 
 /** The ruleset's name, e.g. "Genesis Rules". */
 export const RulesetName = createKeyField(getRuleset)("name");
+
+/** Sets `stage` for everything inside. Takes `counterpick` too. */
+export const Stage = createScope("stage");
 
 /** Repeats its children for each starter stage, or counterpick stage with `counterpick`. */
 export const Stages = createList(getStages);

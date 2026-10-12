@@ -1,10 +1,13 @@
-import { createKeyField, createList, createTextField } from "../createField";
-import { getScore, getStationQueue, getTeams } from "@State/selectors";
+import { createKeyField, createScope, createTextField } from "../createField";
+import { getScore, getTeams } from "@State/selectors";
 
 /** Details about the set currently on the scoreboard. */
 
 /** Builds a text component that shows one property of the scoreboard. */
 const matchField = createKeyField(getScore);
+
+/** Sets `scoreboard` for everything inside. */
+export const Scoreboard = createScope("scoreboard");
 
 /**
  * Builds a text component for a value TSH provides in three forms. `variant` picks one: none for
@@ -59,6 +62,3 @@ export const UpsetFactor = matchField("upset_factor");
 
 /** The bracket format, as TSH names it, e.g. "DOUBLE_ELIMINATION". */
 export const BracketType = createTextField((tsh) => tsh?.score?.bracket_type);
-
-/** Repeats its children for each upcoming set on this station. Items are passed as TSH provides them. */
-export const StationQueue = createList(getStationQueue);

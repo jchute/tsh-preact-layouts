@@ -3,6 +3,7 @@ import {
   createImageField,
   createKeyField,
   createList,
+  createScope,
   createTextField,
 } from "../createField";
 import {
@@ -20,9 +21,12 @@ import { resolveAsset } from "@State/tsh";
  * Details about one player or commentator.
  *
  * Every component here takes `team` and `player` (both default to 1), or `commentator` to read a
- * commentator instead. `source` reads a player from another part of TSH: "playerList", "bracket"
- * or "teamBattle". Name components take `romanized` to prefer Latin-script names.
+ * commentator instead. `source` reads a player from another part of TSH: "playerList", "bracket",
+ * "teamBattle" or "stationQueue". Name components take `romanized` to prefer Latin-script names.
  */
+
+/** Whether a player or commentator slot is empty. */
+const isEmptySlot = (person) => !person?.name;
 
 /** Builds a text component that shows one property of the person. */
 const personField = createKeyField(getPerson);
@@ -39,14 +43,23 @@ const variantField = (key, fallbackVariant) =>
     (tsh, { variant = fallbackVariant, ...props }) => getPerson(tsh, props)?.[key]?.[variant],
   );
 
-/** Repeats its children for each player on the team, passing the `player` index. */
-export const Players = createList(getPlayers);
+/** Sets `player` for everything inside. Takes `romanized` too. */
+export const Player = createScope("player");
+
+/** Sets `commentator` for everything inside, so they read that commentator. Takes `romanized` too. */
+export const Commentator = createScope("commentator");
+
+/**
+ * Repeats its children for each player on the team, passing the `player` index.
+ * Skips player slots with no name.
+ */
+export const Players = createList(getPlayers, { skip: isEmptySlot });
 
 /**
  * Repeats its children for each commentator, passing the `commentator` index.
  * Skips commentator slots with no name.
  */
-export const Commentators = createList(getCommentators, { skip: (person) => !person?.name });
+export const Commentators = createList(getCommentators, { skip: isEmptySlot });
 
 /** The name the person competes under, without the sponsor. Takes `romanized`. */
 export const Gamertag = createTextField(getGamertag);

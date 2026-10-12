@@ -1,5 +1,6 @@
-import { createKeyField, createList, createTextField } from "../createField";
+import { createKeyField, createList, createScope, createTextField } from "../createField";
 import { getLastSet, getLastSets } from "@State/selectors";
+import { joinScores } from "@Utils/format";
 
 /**
  * A team's sets so far at this tournament, i.e. their run through the bracket. Every component
@@ -25,6 +26,9 @@ const sideField = (key, clean = (value) => value) => {
   });
 };
 
+/** Sets `lastSet` for everything inside. Takes `opponent` too. */
+export const LastSet = createScope("lastSet");
+
 /** Repeats its children for each of the team's sets, newest first, passing the `lastSet` index. */
 export const LastSets = createList(getLastSets);
 
@@ -43,20 +47,22 @@ export const LastSetPhase = lastSetField("phase_name");
 /** The round the set was in, e.g. "Winners Round 2". */
 export const LastSetRound = lastSetField("round_name");
 
-/** Whether the team won that set: "W" or "L". */
+/** Whether the team won that set: "W" or "L". Empty until both scores are known. */
 export const LastSetResult = createTextField((tsh, props) => {
   const lastSet = getLastSet(tsh, props);
+  const own = Number(lastSet?.player_score);
+  const other = Number(lastSet?.oponent_score);
 
-  if (!lastSet) {
+  if (lastSet?.player_score == null || lastSet?.oponent_score == null || own === other) {
     return undefined;
   }
 
-  return lastSet.player_score > lastSet.oponent_score ? "W" : "L";
+  return own > other ? "W" : "L";
 });
 
 /** Game count for that set with the team's score first, e.g. "3 - 1". Takes `separator`. */
 export const LastSetScore = createTextField((tsh, { separator = " - ", ...props }) => {
   const lastSet = getLastSet(tsh, props);
 
-  return lastSet ? `${lastSet.player_score}${separator}${lastSet.oponent_score}` : undefined;
+  return joinScores([lastSet?.player_score, lastSet?.oponent_score], separator);
 });

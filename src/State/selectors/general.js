@@ -1,3 +1,5 @@
+import { DEFAULTS } from "./defaults";
+
 /**
  * Sections of TSH that aren't tied to a scoreboard: the tournament, the game, notes and team
  * battle.
@@ -26,7 +28,7 @@ export const getGame = (tsh) => tsh?.game;
  * @param {{ note?: number }} [props] Which note, starting at 1.
  * @returns {object|undefined} The note.
  */
-export const getNote = (tsh, { note = 1 } = {}) => tsh?.notes?.[`notes_widget_${note}`];
+export const getNote = (tsh, { note = DEFAULTS.note } = {}) => tsh?.notes?.[`notes_widget_${note}`];
 
 /**
  * Returns TSH's team battle: its mode, round and each team's total score. The teams and their

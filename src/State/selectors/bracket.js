@@ -1,3 +1,5 @@
+import { DEFAULTS } from "./defaults";
+
 /**
  * TSH's bracket view. TSH keys winners rounds 1, 2, 3... and losers rounds -1, -2, -3..., so
  * these selectors take `losers` to pick a side of the bracket, and `bracketRound` (starting at 1)
@@ -40,8 +42,10 @@ export const getBracketRounds = (tsh, { losers = false } = {}) => {
  * @param {BracketProps} [props]
  * @returns {object|undefined} The round.
  */
-export const getBracketRound = (tsh, { bracketRound = 1, losers = false } = {}) =>
-  getBracket(tsh)?.bracket?.rounds?.[losers ? -bracketRound : bracketRound];
+export const getBracketRound = (
+  tsh,
+  { bracketRound = DEFAULTS.bracketRound, losers = false } = {},
+) => getBracket(tsh)?.bracket?.rounds?.[losers ? -bracketRound : bracketRound];
 
 /**
  * Returns the sets in one round of the bracket, top to bottom, keyed from 0.
@@ -59,5 +63,19 @@ export const getBracketSets = (tsh, props) => getBracketRound(tsh, props)?.sets 
  * @param {BracketProps} [props]
  * @returns {object|undefined} The set.
  */
-export const getBracketSet = (tsh, { bracketSet = 0, ...props } = {}) =>
+export const getBracketSet = (tsh, { bracketSet = DEFAULTS.bracketSet, ...props } = {}) =>
   getBracketSets(tsh, props)[bracketSet];
+
+/**
+ * Returns the bracket slot playing on one side of a set: the `team` to pass with
+ * `source="bracket"` to read that side's details.
+ *
+ * @param {object|null} tsh The program_state.json payload.
+ * @param {BracketProps & { team?: number }} [props] `team` picks the side, 1 or 2. Defaults to 1.
+ * @returns {number|undefined} The slot, or undefined for a bye or a side not yet decided.
+ */
+export const getBracketSetSlot = (tsh, { team = DEFAULTS.team, ...props } = {}) => {
+  const slot = getBracketSet(tsh, props)?.playerId?.[team - 1];
+
+  return slot > 0 ? slot : undefined;
+};
