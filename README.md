@@ -7,8 +7,3 @@ README is a work in process ;_;
 - Describe how to add Layouts
 - Mention that build/index.html?layout=Game is the same as build/Game.html
 - Make a distinction between TSH score and our scoreboard
-
-## TO DO
-
-1. Have src/Layouts be a setting. Update LayoutNotice to show this in the message.
-2. Move settings.json out of the src directory

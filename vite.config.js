@@ -2,6 +2,7 @@ import path from "path";
 import preact from "@preact/preset-vite";
 import { defineConfig } from "vite";
 import { LayoutHTMLGenerator, LayoutVirtualModule } from "./plugins/layouts";
+import { SettingsFile } from "./plugins/settings";
 
 const layoutsDirectory = path.resolve(__dirname, "src/Layouts");
 
@@ -15,6 +16,7 @@ export default defineConfig({
     preact(),
     LayoutVirtualModule({ directory: layoutsDirectory }),
     LayoutHTMLGenerator({ directory: layoutsDirectory }),
+    SettingsFile({ file: path.resolve(__dirname, "settings.json") }),
   ],
   root: "./src",
   resolve: {

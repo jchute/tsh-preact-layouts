@@ -64,8 +64,7 @@ export const getSettings = () => {
 const loadSettings = async () => {
   try {
     // Fetch the settings
-    const url = import.meta.env.DEV ? "/settings.json" : "../src/settings.json";
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetch(`${import.meta.env.BASE_URL}settings.json`, { cache: "no-store" });
 
     // If the response failed, throw error
     if (!response.ok) {
