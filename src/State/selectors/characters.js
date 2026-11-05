@@ -42,6 +42,10 @@ export const getCharacters = (
   }
 
   if (recentSet != null) {
+    if (props.team === null) {
+      return {};
+    }
+
     const team = Number(props.team ?? DEFAULTS.team);
     const side = opponent ? 3 - team : team;
 

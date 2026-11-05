@@ -69,7 +69,8 @@ export const getRulesetStages = (tsh, { counterpick = false, all = false } = {})
  * @param {{ scoreboard?: number|string }} [props]
  * @returns {object|undefined} The stage strike.
  */
-export const getStageStrike = (tsh, props) => getScoreboard(tsh, props)?.stage_strike;
+export const getStageStrike = (tsh, props) =>
+  getScoreboard(tsh, props)?.stage_strike ?? tsh?.score?.[DEFAULTS.scoreboard]?.stage_strike;
 
 /**
  * Returns one stage: from the ruleset by default, the stage of a game with `game`, or the stage

@@ -2,9 +2,29 @@ import { createImageField, createKeyField, createList, createTextField } from ".
 import { getHistory, getHistoryEntry } from "@State/selectors";
 import { formatDate } from "@Utils/format";
 
-/** English month names, which TSH uses to store history dates. */
-const months = Array.from({ length: 12 }, (_, month) =>
-  new Date(2000, month).toLocaleDateString("en-US", { month: "long" }),
+const monthLocales = [
+  undefined,
+  "en-US",
+  "fr-FR",
+  "de-DE",
+  "es-ES",
+  "it-IT",
+  "pt-BR",
+  "nl-NL",
+  "ja-JP",
+  "ko-KR",
+  "zh-CN",
+  "zh-TW",
+  "ru-RU",
+];
+
+const monthIndex = new Map(
+  monthLocales.flatMap((locale) =>
+    Array.from({ length: 12 }, (_, month) => [
+      new Date(2000, month, 1).toLocaleDateString(locale, { month: "long" }).toLocaleLowerCase(),
+      month,
+    ]),
+  ),
 );
 
 /**
@@ -33,10 +53,14 @@ export const HistoryEntrants = historyField("entrants");
 /** When that tournament took place. `locale` sets the date language, e.g. "September 5, 2026" for "en-US". */
 export const HistoryDate = createTextField((tsh, { locale, ...props }) => {
   const entry = getHistoryEntry(tsh, props);
-  const month = months.indexOf(entry?.event_date_month);
+  const month = monthIndex.get(
+    String(entry?.event_date_month ?? "")
+      .trim()
+      .toLocaleLowerCase(),
+  );
 
-  if (month < 0) {
-    return undefined;
+  if (month == null) {
+    return;
   }
 
   return formatDate(

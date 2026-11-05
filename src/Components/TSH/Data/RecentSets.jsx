@@ -36,10 +36,14 @@ export const IfRecentSetsLoading = createCondition((tsh, props) => {
 /** Overall head-to-head record from `team`'s point of view, e.g. "3 - 1". Takes `recordSeparator`. */
 export const HeadToHead = createTextField(
   (tsh, { team = DEFAULTS.team, recordSeparator = SCORE_SEPARATOR, ...props }) => {
+    if (team == null) {
+      return;
+    }
+
     const sets = Object.values(getRecentSets(tsh, props));
 
     if (sets.length === 0) {
-      return undefined;
+      return;
     }
 
     const wins = [0, 1].map((winner) => sets.filter((set) => set?.winner === winner).length);
@@ -70,10 +74,14 @@ export const RecentSetDate = createTextField((tsh, { locale, ...props }) => {
 
 /** Whether `team` won that set: "W" or "L". */
 export const RecentSetResult = createTextField((tsh, { team = DEFAULTS.team, ...props }) => {
+  if (team == null) {
+    return;
+  }
+
   const winner = getRecentSet(tsh, props)?.winner;
 
   if (winner == null || winner < 0) {
-    return undefined;
+    return;
   }
 
   return winner === Number(team) - 1 ? "W" : "L";
@@ -82,6 +90,10 @@ export const RecentSetResult = createTextField((tsh, { team = DEFAULTS.team, ...
 /** Game count for that set from `team`'s point of view, e.g. "2 - 0". Takes `scoreSeparator`. */
 export const RecentSetScore = createTextField(
   (tsh, { team = DEFAULTS.team, scoreSeparator = SCORE_SEPARATOR, ...props }) => {
+    if (team == null) {
+      return;
+    }
+
     const score = getRecentSet(tsh, props)?.score;
 
     return Array.isArray(score) ? joinScores(fromTeam(score, team), scoreSeparator) : undefined;

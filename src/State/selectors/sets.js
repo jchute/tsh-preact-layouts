@@ -133,7 +133,7 @@ export const getStreamQueue = (tsh, { stream } = {}) => {
   const name = (stream ?? tsh?.currentStream ?? "").toLowerCase();
   const key = Object.keys(queues).find((streamName) => streamName.toLowerCase() === name);
 
-  return key != null ? queues[key] : {};
+  return key != null ? startAtOne(queues[key]) : {};
 };
 
 /**

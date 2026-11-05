@@ -24,5 +24,12 @@ export const readLocalizedName = (item, locale) => {
   const translated =
     locale && (translations[locale.replace("-", "_")] ?? translations[locale.split(/[-_]/)[0]]);
 
-  return translated || item?.export_name || item?.name || item?.en_name || undefined;
+  return (
+    translated ||
+    item?.display_name ||
+    item?.export_name ||
+    item?.name ||
+    item?.en_name ||
+    undefined
+  );
 };

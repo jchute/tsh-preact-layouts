@@ -56,7 +56,7 @@ export const formatDate = (date, locale = "en-US") => {
   }
 
   if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
-    return undefined;
+    return;
   }
 
   return value.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });

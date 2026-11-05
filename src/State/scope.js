@@ -42,9 +42,13 @@ export const readPageScope = (params, dataset) => {
  */
 export const useScope = () => useContext(ScopeContext);
 
+const indexProps = new Set(
+  Object.keys(DEFAULTS).filter((key) => typeof DEFAULTS[key] === "number"),
+);
+
 /**
- * Combines the current scope with a component's own props. Props left undefined keep the scope's
- * value, while `null` clears it.
+ * Combines the current scope with a component's own props. Omitted props keep the scope's value.
+ * Null or undefined clears an indexed prop.
  *
  * @param {object} props The component's props.
  * @returns {object} The combined props.
@@ -53,7 +57,9 @@ export const useResolveScopeProps = (props) => {
   const result = { ...useScope() };
 
   for (const key in props) {
-    if (props[key] === null) {
+    if (props[key] == null && indexProps.has(key)) {
+      result[key] = null;
+    } else if (props[key] === null) {
       delete result[key];
     } else if (props[key] !== undefined) {
       result[key] = props[key];

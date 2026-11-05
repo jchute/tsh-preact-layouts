@@ -51,7 +51,7 @@ export const LastSetResult = createTextField((tsh, props) => {
   const other = Number(lastSet?.oponent_score);
 
   if (lastSet?.player_score == null || lastSet?.oponent_score == null || own === other) {
-    return undefined;
+    return;
   }
 
   return own > other ? "W" : "L";

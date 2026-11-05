@@ -96,6 +96,10 @@ export const MergedTeamName = teamField("mergedTeamName");
  * is in losers.
  */
 export const Side = createTextField((tsh, { team = DEFAULTS.team, ...props }) => {
+  if (team == null) {
+    return;
+  }
+
   const teams = getTeams(tsh, props);
 
   if (teams[team]?.losers) {
@@ -113,7 +117,7 @@ export const WinRatio = createTextField((tsh, props) => {
   );
 
   if (total === 0) {
-    return undefined;
+    return;
   }
 
   return `${((getScore(tsh, props) / total) * 100).toFixed(2)}%`;
