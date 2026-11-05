@@ -1,26 +1,30 @@
-import styles from "./styles.module.scss";
 import { cx } from "@Utils/cx";
+import styles from "./image.module.scss";
 
 /**
- * Shows an image sized like text (1em tall by default), keeping its aspect ratio. With no image,
- * an empty 1em square holds its place unless `hide` is set.
+ * Display an image with options for sizing.
  *
  * @param {object} props
  * @param {string} [props.alt] Alternative text. Defaults to empty, marking the image as decorative.
  * @param {string} [props.className] Extra classes for styling.
- * @param {string} [props.height] CSS height.
- * @param {boolean} [props.hide] Render nothing when there is no image, instead of an empty box.
- * @param {string} [props.source] Image URL.
- * @param {string} [props.width] CSS width.
+ * @param {string|number} [props.height] CSS height, defaults to the width or 1em.
+ * @param {string} [props.src] Image URL.
+ * @param {string|number} [props.width] CSS width, defaults to the height or 1em.
  */
-export const Image = ({ alt = "", className, height, hide = false, source, width }) => {
-  const style = { height, width };
-
-  if (!source) {
-    return hide ? null : (
-      <span className={cx(styles.image, styles.empty, className)} style={style} />
-    );
+export const Image = ({ alt = "", className, height, src, width }) => {
+  if (!src) {
+    return null;
   }
 
-  return <img alt={alt} className={cx(styles.image, className)} src={source} style={style} />;
+  return (
+    <img
+      alt={alt}
+      className={cx(styles.image, className)}
+      src={src}
+      style={{
+        height: height ?? width,
+        width: width ?? height,
+      }}
+    />
+  );
 };

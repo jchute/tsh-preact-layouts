@@ -32,6 +32,7 @@
     "@Assets/": "/src/Assets/",
     "@Components/": "/src/Components/",
     "@Layouts/": "/src/Layouts/",
+    "@Notices/": "/src/Notices/",
     "@State/": "/src/State/",
     "@Utils/": "/src/Utils/"
   }

@@ -1,6 +1,6 @@
-import { createKeyField, createList, createScope, createTextField } from "../createField";
+import { createKeyField, createList, createTextField } from "../createField";
+import { joinScores, SCORE_SEPARATOR } from "@Utils/format";
 import { getLastSet, getLastSets } from "@State/selectors";
-import { joinScores } from "@Utils/format";
 
 /**
  * A team's sets so far at this tournament, i.e. their run through the bracket. Every component
@@ -20,26 +20,23 @@ const lastSetField = createKeyField(getLastSet);
  * @param {string} key The property, without its "player_" / "oponent_" prefix.
  * @param {(value: any) => any} [clean] Tidies up the value, e.g. hiding TSH's 0 for "no seed".
  */
-const sideField = (key, clean = (value) => value) => {
+const ownOrOpponentField = (key, clean = (value) => value) => {
   return createTextField((tsh, { opponent = false, ...props }) => {
     return clean(getLastSet(tsh, props)?.[`${opponent ? "oponent" : "player"}_${key}`]);
   });
 };
 
-/** Sets `lastSet` for everything inside. Takes `opponent` too. */
-export const LastSet = createScope("lastSet");
-
 /** Repeats its children for each of the team's sets, newest first, passing the `lastSet` index. */
 export const LastSets = createList(getLastSets);
 
 /** The team's gamertag in that set, or the other side's with `opponent`. */
-export const LastSetName = sideField("name");
+export const LastSetName = ownOrOpponentField("name");
 
 /** The team's sponsor in that set, or the other side's with `opponent`. */
-export const LastSetSponsor = sideField("team");
+export const LastSetSponsor = ownOrOpponentField("team");
 
 /** The team's seed, or the other side's with `opponent`. Empty when unseeded. */
-export const LastSetSeed = sideField("seed", (seed) => seed || undefined);
+export const LastSetSeed = ownOrOpponentField("seed", (seed) => seed || undefined);
 
 /** The bracket phase the set was in, e.g. "Pools". */
 export const LastSetPhase = lastSetField("phase_name");
@@ -60,9 +57,11 @@ export const LastSetResult = createTextField((tsh, props) => {
   return own > other ? "W" : "L";
 });
 
-/** Game count for that set with the team's score first, e.g. "3 - 1". Takes `separator`. */
-export const LastSetScore = createTextField((tsh, { separator = " - ", ...props }) => {
-  const lastSet = getLastSet(tsh, props);
+/** Game count for that set with the team's score first, e.g. "3 - 1". Takes `scoreSeparator`. */
+export const LastSetScore = createTextField(
+  (tsh, { scoreSeparator = SCORE_SEPARATOR, ...props }) => {
+    const lastSet = getLastSet(tsh, props);
 
-  return joinScores([lastSet?.player_score, lastSet?.oponent_score], separator);
-});
+    return joinScores([lastSet?.player_score, lastSet?.oponent_score], scoreSeparator);
+  },
+);

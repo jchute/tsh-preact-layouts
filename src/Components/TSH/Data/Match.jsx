@@ -1,38 +1,65 @@
-import { createKeyField, createScope, createTextField } from "../createField";
-import { getScore, getTeams } from "@State/selectors";
+import { createKeyField, createTextField } from "../createField";
+import { SCORE_SEPARATOR } from "@Utils/format";
+import { useResolveScopeProps } from "@State/scope";
+import { DEFAULTS, getBracketType, getScore, getScoreboard, getTeams } from "@State/selectors";
 
 /** Details about the set currently on the scoreboard. */
 
 /** Builds a text component that shows one property of the scoreboard. */
-const matchField = createKeyField(getScore);
+const matchField = createKeyField(getScoreboard);
 
-/** Sets `scoreboard` for everything inside. */
-export const Scoreboard = createScope("scoreboard");
+/** Builds a text component for a value TSH provides in three forms. */
+const setLengthTextVariantField = (key) => {
+  return createTextField((tsh, { setLengthTextVariant = "number", ...props }) => {
+    const keys = { number: key, text: `${key}_text`, short: `${key}_short_text` };
 
-/**
- * Builds a text component for a value TSH provides in three forms. `variant` picks one: none for
- * the number, "text" for the long form, or "short".
- *
- * @param {string} key The number's key. The other forms are `${key}_text` and `${key}_short_text`.
- */
-const variantField = (key) => {
-  return createTextField((tsh, { variant, ...props }) => {
-    return getScore(tsh, props)?.[
-      { text: `${key}_text`, short: `${key}_short_text` }[variant] ?? key
-    ];
+    if (!Object.hasOwn(keys, setLengthTextVariant)) {
+      console.error(
+        `setLengthTextVariant must be "number", "text" or "short", got "${setLengthTextVariant}".`,
+      );
+    }
+
+    return getScoreboard(tsh, props)?.[keys[setLengthTextVariant]];
   });
 };
 
-/** How many games the set can last: 5, "Best of 5" (`variant="text"`) or "BO5" (`variant="short"`). */
-export const BestOf = variantField("best_of");
+/** How many games the set can last: 5 (`setLengthTextVariant="number"`, default), "Best of 5" (`"text"`) or "BO5" (`"short"`). */
+export const BestOf = setLengthTextVariantField("best_of");
 
-/** Game wins needed to take the set: 3, "First to 3" (`variant="text"`) or "FT3" (`variant="short"`). */
-export const FirstTo = variantField("first_to");
+/** Game wins needed to take the set: 3 (`setLengthTextVariant="number"`, default), "First to 3" (`"text"`) or "FT3" (`"short"`). */
+export const FirstTo = setLengthTextVariantField("first_to");
+
+/**
+ * The set's length as either `BestOf` or `FirstTo`, chosen with `setMode`, so a layout can swap
+ * between them by changing one prop (or once for many components with `<Scope setMode="firstTo">`).
+ *
+ * - `setMode`: "bestOf" (default) or "firstTo".
+ * - `setLengthTextVariant`: "number" (default), "text" or "short".
+ *
+ * @example
+ * <SetLength setMode="firstTo" setLengthTextVariant="text" />
+ * <SetLength setLengthTextVariant="number" />
+ */
+export const SetLength = (props) => {
+  const { setMode = DEFAULTS.setMode } = useResolveScopeProps(props);
+  const fields = { bestOf: BestOf, firstTo: FirstTo };
+  const Field = fields[setMode];
+
+  if (!Field) {
+    console.error(`setMode must be "bestOf" or "firstTo", got "${setMode}".`);
+    return null;
+  }
+
+  return <Field {...props} />;
+};
 
 /** The round being played, e.g. "Losers Quarter-Final". */
 export const Match = matchField("match");
 
-/** The round as a number, alongside the `Match` round name. */
+// Alias for Match with a more descriptive name.
+export const RoundName = Match;
+
+/** The round as a number, alongside the `RoundName` round name. */
 export const RoundNumber = matchField("round");
 
 /** The bracket phase, e.g. "Top 8". */
@@ -44,11 +71,11 @@ export const PhaseGroups = matchField("num_groups");
 /** Number of entrants in the phase. */
 export const PhaseSize = matchField("phase_size");
 
-/** Both teams' game wins in the current set, team 1 first, e.g. "2 - 1". Takes `separator`. */
-export const SetScore = createTextField((tsh, { separator = " - ", ...props }) => {
-  return Object.values(getTeams(tsh, props))
-    .map((team) => team?.score || 0)
-    .join(separator);
+/** Both teams' game wins in the current set, team 1 first, e.g. "2 - 1". Takes `scoreSeparator`. */
+export const SetScore = createTextField((tsh, { scoreSeparator = SCORE_SEPARATOR, ...props }) => {
+  return Object.keys(getTeams(tsh, props))
+    .map((team) => getScore(tsh, { ...props, team }))
+    .join(scoreSeparator);
 });
 
 /** The setup the set is being played on. */
@@ -61,4 +88,4 @@ export const StreamUrl = matchField("stream_url");
 export const UpsetFactor = matchField("upset_factor");
 
 /** The bracket format, as TSH names it, e.g. "DOUBLE_ELIMINATION". */
-export const BracketType = createTextField((tsh) => tsh?.score?.bracket_type);
+export const BracketType = createTextField(getBracketType);

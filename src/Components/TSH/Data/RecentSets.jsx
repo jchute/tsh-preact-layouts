@@ -1,17 +1,13 @@
-import {
-  createCondition,
-  createKeyField,
-  createList,
-  createScope,
-  createTextField,
-} from "../createField";
-import { DEFAULTS, getRecentSet, getRecentSets, getScore } from "@State/selectors";
-import { formatDate, joinScores } from "@Utils/format";
+import { createCondition, createKeyField, createList, createTextField } from "../createField";
+import { formatDate, joinScores, SCORE_SEPARATOR } from "@Utils/format";
+import { DEFAULTS, getRecentSet, getRecentSets, getScoreboard } from "@State/selectors";
 
 /**
  * Head-to-head history: previous sets between the two teams currently playing, possibly at other
- * tournaments. Components about a single set take `recentSet` (starting at 0). Components that
- * compare the teams take `team` (default 1) to say whose point of view to show it from.
+ * tournaments. Components about a single set take `recentSet` (starting at 1). Components that
+ * compare the teams take `team` (default 1) to say whose point of view to show it from. The
+ * characters played are shown with the character components:
+ * `<CharacterName team={1} recentSet={1} opponent />`.
  */
 
 /** Builds a text component that shows one property of the set. */
@@ -26,9 +22,6 @@ const recentSetField = createKeyField(getRecentSet);
  */
 const fromTeam = (pair, team) => (Number(team) === 2 ? [...pair].reverse() : pair);
 
-/** Sets `recentSet` for everything inside. */
-export const RecentSet = createScope("recentSet");
-
 /** Repeats its children for each previous set between the teams, passing the `recentSet` index. */
 export const RecentSets = createList(getRecentSets);
 
@@ -37,12 +30,12 @@ export const RecentSets = createList(getRecentSets);
  * background and can arrive after the rest of the data.
  */
 export const IfRecentSetsLoading = createCondition((tsh, props) => {
-  return getScore(tsh, props)?.recent_sets?.state === "loading";
+  return getScoreboard(tsh, props)?.recent_sets?.state === "loading";
 });
 
-/** Overall head-to-head record from `team`'s point of view, e.g. "3 - 1". Takes `separator`. */
+/** Overall head-to-head record from `team`'s point of view, e.g. "3 - 1". Takes `recordSeparator`. */
 export const HeadToHead = createTextField(
-  (tsh, { team = DEFAULTS.team, separator = " - ", ...props }) => {
+  (tsh, { team = DEFAULTS.team, recordSeparator = SCORE_SEPARATOR, ...props }) => {
     const sets = Object.values(getRecentSets(tsh, props));
 
     if (sets.length === 0) {
@@ -51,7 +44,7 @@ export const HeadToHead = createTextField(
 
     const wins = [0, 1].map((winner) => sets.filter((set) => set?.winner === winner).length);
 
-    return fromTeam(wins, team).join(separator);
+    return fromTeam(wins, team).join(recordSeparator);
   },
 );
 
@@ -67,7 +60,10 @@ export const RecentSetPhase = recentSetField("phase_name");
 /** The round that set was in, e.g. "Winners Final". */
 export const RecentSetRound = recentSetField("round");
 
-/** When that set was played. `locale` sets the date language, e.g. "October 3, 2026" for "en-US". */
+/**
+ * When the event that set was part of started, which for a multi-day event can be earlier than the
+ * set itself. `locale` sets the date language, e.g. "October 3, 2026" for "en-US".
+ */
 export const RecentSetDate = createTextField((tsh, { locale, ...props }) => {
   return formatDate(getRecentSet(tsh, props)?.timestamp, locale);
 });
@@ -83,12 +79,12 @@ export const RecentSetResult = createTextField((tsh, { team = DEFAULTS.team, ...
   return winner === Number(team) - 1 ? "W" : "L";
 });
 
-/** Game count for that set from `team`'s point of view, e.g. "2 - 0". Takes `separator`. */
+/** Game count for that set from `team`'s point of view, e.g. "2 - 0". Takes `scoreSeparator`. */
 export const RecentSetScore = createTextField(
-  (tsh, { team = DEFAULTS.team, separator = " - ", ...props }) => {
+  (tsh, { team = DEFAULTS.team, scoreSeparator = SCORE_SEPARATOR, ...props }) => {
     const score = getRecentSet(tsh, props)?.score;
 
-    return Array.isArray(score) ? joinScores(fromTeam(score, team), separator) : undefined;
+    return Array.isArray(score) ? joinScores(fromTeam(score, team), scoreSeparator) : undefined;
   },
 );
 

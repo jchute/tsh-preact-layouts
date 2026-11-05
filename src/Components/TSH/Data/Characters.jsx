@@ -1,5 +1,5 @@
-import { createImageField, createList, createScope, createTextField } from "../createField";
-import { getCharacter, getCharacters } from "@State/selectors";
+import { createImageField, createList, createTextField } from "../createField";
+import { getCharacter, getCharacters, readLocalizedName } from "@State/selectors";
 import { resolveAsset } from "@State/tsh";
 
 /**
@@ -10,19 +10,27 @@ import { resolveAsset } from "@State/tsh";
  *   Add `main` for their usual mains instead.
  * - `team` and `lastSet`: the characters the team played in one of its previous sets. Add
  *   `opponent` for the other side's characters.
+ * - `team` and `recentSet`: the characters the team played in one of the head-to-head sets
+ *   between the current teams. Add `opponent` for the other team's.
+ *
+ * Name components show the language TSH exports for overlays. `locale` asks for another language
+ * TSH has, e.g. "fr" or "pt-BR".
  */
-
-/** Sets `character` for everything inside. Takes `main`, `lastSet` and `opponent` too. */
-export const Character = createScope("character");
 
 /** Repeats its children for each character, passing the `character` index. Skips empty slots. */
 export const Characters = createList(getCharacters, { skip: (character) => !character?.name });
 
-/** The character's name, preferring TSH's display name over the English one. */
-export const CharacterName = createTextField((tsh, props) => {
-  const character = getCharacter(tsh, props);
+/** The character's name. Takes `locale`. */
+export const CharacterName = createTextField((tsh, { locale, ...props }) => {
+  return readLocalizedName(getCharacter(tsh, props), locale);
+});
 
-  return character?.display_name || character?.en_name || character?.name;
+/**
+ * The character's variant, for games where TSH tracks one alongside the skin, e.g. a fighting
+ * style. Empty when there's none. Takes `locale`.
+ */
+export const CharacterVariant = createTextField((tsh, { locale, ...props }) => {
+  return readLocalizedName(getCharacter(tsh, props)?.variant, locale);
 });
 
 /**

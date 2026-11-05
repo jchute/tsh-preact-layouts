@@ -1,10 +1,4 @@
-import {
-  createImageField,
-  createKeyField,
-  createList,
-  createScope,
-  createTextField,
-} from "../createField";
+import { createImageField, createKeyField, createList, createTextField } from "../createField";
 import { getHistory, getHistoryEntry } from "@State/selectors";
 import { formatDate } from "@Utils/format";
 
@@ -20,9 +14,6 @@ const months = Array.from({ length: 12 }, (_, month) =>
 
 /** Builds a text component that shows one property of the result. */
 const historyField = createKeyField(getHistoryEntry);
-
-/** Sets `historyEntry` for everything inside. */
-export const HistoryEntry = createScope("historyEntry");
 
 /** Repeats its children for each past result, newest first, passing the `historyEntry` index. */
 export const History = createList(getHistory);

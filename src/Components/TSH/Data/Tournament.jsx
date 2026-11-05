@@ -1,20 +1,20 @@
-import { createImageField, createKeyField, createScope, createTextField } from "../createField";
-import { getGame, getNote, getTournament } from "@State/selectors";
+import { createImageField, createKeyField, createTextField } from "../createField";
+import { getNote, getTournament, getVideogame } from "@State/selectors";
 import { resolveAsset } from "@State/tsh";
 import { formatDate } from "@Utils/format";
 
 /**
- * Details about the tournament, the event being streamed (e.g. "Ultimate Singles"), the game and
- * TSH's note widgets. Date components take `locale`, e.g. "October 3, 2026" for "en-US".
+ * Details about the tournament, the event being streamed (e.g. "Ultimate Singles"),
+ * the videogame and TSH's note widgets.
  */
 
 /** Builds a text component that shows one property of the tournament info. */
 const tournamentField = createKeyField(getTournament);
 
 /**
- * Builds a text component that shows one of the tournament info's dates. Takes `locale`.
+ * Builds a text component that shows one of the tournament info's dates.
  *
- * @param {string} key The date's property, a Unix timestamp in seconds.
+ * @param {string} key The date's property, a timestamp or a date string.
  */
 const dateField = (key) =>
   createTextField((tsh, { locale, ...props }) =>
@@ -23,9 +23,6 @@ const dateField = (key) =>
 
 /** Builds a text component that shows one property of a note. Takes `note` (starting at 1). */
 const noteField = createKeyField(getNote);
-
-/** Sets `note` for everything inside. */
-export const Note = createScope("note");
 
 /** The tournament's name, e.g. "Genesis 11". */
 export const TournamentName = tournamentField("tournamentName");
@@ -54,11 +51,11 @@ export const EventStart = dateField("eventStartAt");
 /** When the event being streamed finishes. */
 export const EventEnd = dateField("eventEndAt");
 
-/** The game selected in TSH, e.g. "Super Smash Bros. Ultimate". */
-export const GameName = createKeyField(getGame)("name");
+/** The videogame selected in TSH, e.g. "Super Smash Bros. Ultimate". */
+export const VideogameName = createKeyField(getVideogame)("name");
 
-/** The game's logo. */
-export const GameLogo = createImageField((tsh) => resolveAsset(getGame(tsh)?.logo));
+/** The videogame's logo. */
+export const VideogameLogo = createImageField((tsh) => resolveAsset(getVideogame(tsh)?.logo));
 
 /** The title of one of TSH's note widgets. Takes `note`. */
 export const NoteTitle = noteField("title");

@@ -1,6 +1,6 @@
-import { normalizePath } from "vite";
 import path from "path";
-import { highlight } from "./node/log.js";
+import { normalizePath } from "vite";
+import { color } from "./node/log.js";
 import { getLayoutExports, getLayouts } from "./node/scanLayouts.js";
 import { findLayoutExport } from "./runtime/resolveLayoutExport.js";
 
@@ -11,7 +11,8 @@ const LAYOUTS_ID = "virtual:layouts";
 const RESOLVED_LAYOUTS_ID = `\0${LAYOUTS_ID}`;
 
 /**
- * Creates a Vite virtual module whose default export maps every layout's name to its component.
+ * Creates a Vite plugin that generates a virtual module
+ * whose default export maps every layout's name to its component.
  *
  * For example, if the directory contains:
  *
@@ -75,7 +76,7 @@ export const LayoutVirtualModule = ({ directory }) => {
 
       const result = getLayouts(directory);
       layouts = result.layouts;
-      result.errors.forEach((error) => this.warn(highlight(error)));
+      result.errors.forEach((error) => this.warn(color(error)));
 
       const resolveLayoutExportPath = normalizePath(
         path.resolve(__dirname, "runtime/resolveLayoutExport.js"),
@@ -114,7 +115,7 @@ export const LayoutVirtualModule = ({ directory }) => {
         const found = exports.length ? exports.join(", ") : "none";
 
         this.warn(
-          highlight(
+          color(
             `Layout "${name}" (${file}) may render nothing: it needs a default export, an export named "${name}", or exactly one exported component. Found exports: ${found}.`,
           ),
         );

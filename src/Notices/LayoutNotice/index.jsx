@@ -1,6 +1,6 @@
 import layouts from "virtual:layouts";
 import { BaseNotice } from "../BaseNotice";
-import { LayoutLink } from "@Components/Elements/Navigation/LayoutLink";
+import { LayoutLink } from "@Components/Navigation/LayoutLink";
 import { RequestedAs } from "./RequestedAs";
 
 /**
@@ -28,7 +28,7 @@ export const LayoutNotice = ({ layout }) => {
     );
   }
 
-  if (!layout || !(layout in layouts)) {
+  if (!layout || !Object.hasOwn(layouts, layout)) {
     return (
       <BaseNotice heading="Layout not found">
         <p>

@@ -1,6 +1,6 @@
 import { DEFAULTS } from "./defaults";
 import { getPerson } from "./people";
-import { getLastSet } from "./sets";
+import { getLastSet, getRecentSet } from "./sets";
 
 /**
  * Characters, wherever TSH stores them:
@@ -9,12 +9,15 @@ import { getLastSet } from "./sets";
  * - With `main`: that person's usual mains instead.
  * - With `lastSet`: the characters a team played in one of its previous sets. Add `opponent` for
  *   the characters the other side played.
+ * - With `recentSet`: the characters `team` played in one of the head-to-head sets between the
+ *   current teams. Add `opponent` for the other team's.
  */
 
 /**
  * @typedef {import("./people").PersonProps & {
  *   main?: boolean,
  *   lastSet?: number,
+ *   recentSet?: number,
  *   opponent?: boolean,
  * }} CharacterSourceProps
  */
@@ -26,13 +29,23 @@ import { getLastSet } from "./sets";
  * @param {CharacterSourceProps} [props]
  * @returns {object} The characters, keyed by index.
  */
-export const getCharacters = (tsh, { main = false, lastSet, opponent = false, ...props } = {}) => {
+export const getCharacters = (
+  tsh,
+  { main = false, lastSet, recentSet, opponent = false, ...props } = {},
+) => {
   if (lastSet != null) {
     const side = getLastSet(tsh, { ...props, lastSet })?.[
       opponent ? "oponent_char" : "player_char"
     ];
 
     return side?.character ?? {};
+  }
+
+  if (recentSet != null) {
+    const team = Number(props.team ?? DEFAULTS.team);
+    const side = opponent ? 3 - team : team;
+
+    return getRecentSet(tsh, { ...props, recentSet })?.[`p${side}_char`]?.character ?? {};
   }
 
   return getPerson(tsh, props)?.[main ? "mains" : "character"] ?? {};

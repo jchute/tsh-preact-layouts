@@ -11,5 +11,4 @@ README is a work in process ;_;
 ## TO DO
 
 1. Have src/Layouts be a setting. Update LayoutNotice to show this in the message.
-
-I think score.getStage and score.getStages are not right
+2. Move settings.json out of the src directory

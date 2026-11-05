@@ -2,19 +2,15 @@ import { createContext } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { getSettings } from "./settings";
 
-/**
- * Live TSH payload plus the scope: props (`scoreboard`, `team`, `player`...) that every field
- * inside reads unless it passes its own. The page sets the first scope, and scope wrappers like
- * `<Team>` add to it. Anything left unset falls back to `DEFAULTS` in the selectors.
- */
-export const TSHContext = createContext({ tsh: null, scope: {} });
+/** The live TSH payload. Null until TSH's first update. */
+export const TSHDataContext = createContext(null);
 
 /**
- * Returns the TSH payload and the current scope from context. Null tsh until the first update.
+ * Returns the live TSH payload from context.
  *
- * @returns {{ tsh: object|null, scope: object }}
+ * @returns {object|null} The full payload, or null until TSH's first update arrives.
  */
-export const useTSH = () => useContext(TSHContext);
+export const useTSH = () => useContext(TSHDataContext);
 
 /** The most recent program_state.json payload. */
 let latestTSHPayload = null;
@@ -22,23 +18,17 @@ let latestTSHPayload = null;
 /** Stops the running poll loop, or null when nothing is polling. */
 let stopPolling = null;
 
+/** How many mounted `useTSHPolling` hooks need the poll loop running. */
+let subscribers = 0;
+
 /** URL of TSH's root folder, which its asset paths are relative to. Known once polling starts. */
 let assetBase = null;
 
 /**
- * Returns the newest copy of TSH's full state, for reading data outside of a `tsh_update` event.
+ * Get the full URL of a TSH asset path (flags, character icons, logos) for the browser to load.
  *
- * @returns {object|null} The program_state.json payload, or null if nothing has loaded yet.
- */
-const getLatestTSHData = () => latestTSHPayload;
-
-/**
- * Turns a TSH asset path (flags, character icons, logos), which is relative to the TSH root
- * e.g. "./assets/...", into a full URL the browser can load.
- *
- * @param {string} [asset] The path as TSH provides it.
- * @returns {string|null} The URL, or null if there is no path, it isn't a valid URL, or polling
- * hasn't started yet.
+ * @param {string} [asset] The relative path as TSH provides it. e.g. "./assets/..."
+ * @returns {string|null} The URL, or null.
  */
 export const resolveAsset = (asset) => {
   if (!asset || !assetBase) {
@@ -53,14 +43,17 @@ export const resolveAsset = (asset) => {
 };
 
 /**
- * Starts checking TSH's program_state.json for changes, firing a `tsh_update` event on `document`
- * with `{ data, oldData }` whenever it is updated. Calling it while it's running does nothing.
+ * Starts polling TSH's program_state.json for changes.
+ *
+ * This will fire a `tsh_update` event on `document` with `{ data, oldData }` whenever it is updated.
+ * After a failed check, the wait doubles up to `maxInterval` before trying again.
  *
  * @param {object} [options]
  * @param {number} [options.interval] Milliseconds to wait between checks.
+ * @param {number} [options.maxInterval] Longest wait, in milliseconds, while checks are failing.
  * @returns {() => void} Stops the polling.
  */
-const startTSHPolling = ({ interval = 64 } = {}) => {
+const startTSHPolling = ({ interval = 64, maxInterval = 2000 } = {}) => {
   if (stopPolling) {
     return stopPolling;
   }
@@ -68,6 +61,8 @@ const startTSHPolling = ({ interval = 64 } = {}) => {
   let stopped = false;
   let timer = null;
   let url = null;
+  let delay = interval;
+  let failing = false;
 
   // Try to pull data from TSH repeatedly
   const poll = async () => {
@@ -80,6 +75,13 @@ const startTSHPolling = ({ interval = 64 } = {}) => {
       }
 
       const data = await response.json();
+
+      if (failing) {
+        console.info("TSH polling recovered.");
+      }
+
+      failing = false;
+      delay = interval;
 
       // Skip if data didn't change, or polling stopped while the request was out
       if (stopped || (latestTSHPayload && data.timestamp <= (latestTSHPayload.timestamp || 0))) {
@@ -99,10 +101,21 @@ const startTSHPolling = ({ interval = 64 } = {}) => {
         }),
       );
     } catch (e) {
-      console.error("TSH polling error:", e);
+      // TSH was mid-write, so the file was cut short: retry quietly
+      if (e instanceof SyntaxError) {
+        return;
+      }
+
+      // Log once per outage rather than on every retry
+      if (!failing) {
+        console.error("TSH polling error:", e);
+      }
+
+      failing = true;
+      delay = Math.min(delay * 2, maxInterval);
     } finally {
       if (!stopped) {
-        timer = setTimeout(poll, interval);
+        timer = setTimeout(poll, delay);
       }
     }
   };
@@ -145,17 +158,23 @@ const startTSHPolling = ({ interval = 64 } = {}) => {
  * @returns {object|null} The full payload, or null until TSH's first update arrives.
  */
 export const useTSHPolling = () => {
-  const [tsh, setTSH] = useState(getLatestTSHData);
+  const [tsh, setTSH] = useState(latestTSHPayload);
 
   useEffect(() => {
     const stop = startTSHPolling();
-    setTSH(getLatestTSHData());
+    subscribers++;
+    setTSH(latestTSHPayload);
 
     const handler = (e) => setTSH(e.detail.data);
 
     document.addEventListener("tsh_update", handler);
     return () => {
-      stop();
+      subscribers--;
+
+      if (subscribers === 0) {
+        stop();
+      }
+
       document.removeEventListener("tsh_update", handler);
     };
   }, []);

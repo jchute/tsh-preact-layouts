@@ -3,9 +3,9 @@ import {
   createImageField,
   createKeyField,
   createList,
-  createScope,
   createTextField,
 } from "../createField";
+import { SCORE_SEPARATOR } from "@Utils/format";
 import {
   getCommentators,
   getGamertag,
@@ -20,9 +20,11 @@ import { resolveAsset } from "@State/tsh";
 /**
  * Details about one player or commentator.
  *
- * Every component here takes `team` and `player` (both default to 1), or `commentator` to read a
- * commentator instead. `source` reads a player from another part of TSH: "playerList", "bracket",
- * "teamBattle" or "stationQueue". Name components take `romanized` to prefer Latin-script names.
+ * Every component here takes `team` and `player` (both default to 1). `source` reads a player from
+ * another part of TSH: "playerList", "bracket", "teamBattle" or "queuedSet". Or use
+ * `source="commentary"` with `commentator` (default 1) to read a commentator instead, e.g.
+ * `<Gamertag source="commentary" commentator={2} />`. Name components take `romanized` to prefer
+ * Latin-script names.
  */
 
 /** Whether a player or commentator slot is empty. */
@@ -33,21 +35,18 @@ const personField = createKeyField(getPerson);
 
 /**
  * Builds a text component that shows one property of an object on the person, such as their
- * country. `variant` picks the property.
+ * country. The prop named after the object, e.g. `countryVariant`, picks the property.
  *
  * @param {string} key The object on TSH's person, e.g. "country".
- * @param {string} fallbackVariant The property shown when `variant` isn't set.
+ * @param {string} fallbackVariant The property shown when the variant prop isn't set.
  */
-const variantField = (key, fallbackVariant) =>
-  createTextField(
-    (tsh, { variant = fallbackVariant, ...props }) => getPerson(tsh, props)?.[key]?.[variant],
-  );
+const objectVariantField = (key, fallbackVariant) => {
+  const variantProp = `${key}Variant`;
 
-/** Sets `player` for everything inside. Takes `romanized` too. */
-export const Player = createScope("player");
-
-/** Sets `commentator` for everything inside, so they read that commentator. Takes `romanized` too. */
-export const Commentator = createScope("commentator");
+  return createTextField((tsh, { [variantProp]: variant = fallbackVariant, ...props }) => {
+    return getPerson(tsh, props)?.[key]?.[variant];
+  });
+};
 
 /**
  * Repeats its children for each player on the team, passing the `player` index.
@@ -56,8 +55,8 @@ export const Commentator = createScope("commentator");
 export const Players = createList(getPlayers, { skip: isEmptySlot });
 
 /**
- * Repeats its children for each commentator, passing the `commentator` index.
- * Skips commentator slots with no name.
+ * Repeats its children for each commentator, passing the `commentator` index. Skips commentator
+ * slots with no name. Show each one with `source="commentary"` on the person components.
  */
 export const Commentators = createList(getCommentators, { skip: isEmptySlot });
 
@@ -69,7 +68,7 @@ export const Sponsor = createTextField(getSponsor);
 
 /**
  * Sponsor and gamertag together, e.g. "YTS | Jonch", or only the gamertag when there's no sponsor.
- * Takes `romanized`, and `separator` to change the text between them.
+ * Takes `romanized`, and `sponsorSeparator` to change the text between them.
  */
 export const MergedName = createTextField(getMergedName);
 
@@ -100,11 +99,11 @@ export const Losses = personField("losses");
 /** Share of sets won at this tournament, e.g. "84.62%". */
 export const WinPercentage = personField("winPercentage");
 
-/** Sets won and lost at this tournament, e.g. "11 - 2". `separator` changes the text between. */
-export const Record = createTextField((tsh, { separator = " - ", ...props }) => {
+/** Sets won and lost at this tournament, e.g. "11 - 2". `recordSeparator` changes the text between. */
+export const Record = createTextField((tsh, { recordSeparator = SCORE_SEPARATOR, ...props }) => {
   const person = getPerson(tsh, props);
 
-  return person?.wins != null ? `${person.wins}${separator}${person.losses ?? 0}` : undefined;
+  return person?.wins != null ? `${person.wins}${recordSeparator}${person.losses ?? 0}` : undefined;
 });
 
 /** Profile picture. A local avatar set in TSH takes priority over the start.gg one. */
@@ -115,15 +114,24 @@ export const Avatar = createImageField((tsh, props) => {
 });
 
 /**
+ * Logo for the person's sponsor, from TSH's `user_data/sponsor_logo` folder, where each logo is
+ * named after its sponsor in capitals, e.g. "YTS.png". For a combined sponsor like "YTS / ABC"
+ * with no logo of its own, shows the first one TSH finds.
+ */
+export const SponsorLogo = createImageField((tsh, props) => {
+  return resolveAsset(getPerson(tsh, props)?.sponsor_logo);
+});
+
+/**
  * The country the person represents.
  *
- * `variant` picks the field:
+ * `countryVariant` picks the field:
  * - "name" (default)
  * - "code"
  * - "emoji"
  * - "display_name"
  */
-export const Country = variantField("country", "name");
+export const Country = objectVariantField("country", "name");
 
 /** Flag image for the person's country. */
 export const CountryFlag = createImageField((tsh, props) => {
@@ -132,11 +140,11 @@ export const CountryFlag = createImageField((tsh, props) => {
 
 /** The state, province or region.
  *
- * `variant` picks the field:
+ * `stateVariant` picks the field:
  * - "name" (default)
  * - "code"
  */
-export const State = variantField("state", "name");
+export const State = objectVariantField("state", "name");
 
 /** Flag image for the person's state or region, when TSH has one. */
 export const StateFlag = createImageField((tsh, props) => {
@@ -146,27 +154,31 @@ export const StateFlag = createImageField((tsh, props) => {
 /**
  * The controller the person plays on.
  *
- * `variant` picks the field:
+ * `controllerVariant` picks the field:
  * - "name" (default)
  * - "short_name"
  * - "manufacturer"
  * - "type"
  */
-export const Controller = variantField("controller", "name");
+export const Controller = objectVariantField("controller", "name");
 
 /**
  * Picture of the person's controller.
  *
- * `variant` picks the image:
+ * `controllerIconVariant` picks the image:
  * - "simple" (default, small icon)
  * - "full" (photo)
  * - "category" (e.g. pads)
  */
-export const ControllerIcon = createImageField((tsh, { variant = "simple", ...props }) => {
-  const key = { full: "icon_path", category: "category_icon_path" }[variant] ?? "simple_icon_path";
+export const ControllerIcon = createImageField(
+  (tsh, { controllerIconVariant = "simple", ...props }) => {
+    const key =
+      { full: "icon_path", category: "category_icon_path" }[controllerIconVariant] ??
+      "simple_icon_path";
 
-  return resolveAsset(getPerson(tsh, props)?.controller?.[key]);
-});
+    return resolveAsset(getPerson(tsh, props)?.controller?.[key]);
+  },
+);
 
 /**
  * Renders its children only when the person's gamertag has a different romanized spelling, e.g.
@@ -182,3 +194,9 @@ export const IfActive = createCondition((tsh, props) => getPerson(tsh, props)?.a
 
 /** Team battle only: renders its children only when the player has been eliminated. */
 export const IfEliminated = createCondition((tsh, props) => getPerson(tsh, props)?.dead);
+
+/**
+ * Team battle only: the player's counter. Stocks left in "Stock Pool" mode, or points scored
+ * toward the target in "First To" mode.
+ */
+export const BattleCounter = personField("dynamic_spinner");

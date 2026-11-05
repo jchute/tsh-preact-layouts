@@ -1,5 +1,5 @@
-/** The loaded settings, cached after the first `getSettings` call. */
-let settings = null;
+/** The settings request, cached on the first `getSettings` call so later calls share it. */
+let settingsPromise = null;
 
 /**
  * Default options for settings.json, used for anything the file leaves out.
@@ -50,11 +50,18 @@ const deepMerge = (target, source) => {
  *
  * @returns {Promise<object>} The settings.
  */
-export const getSettings = async () => {
-  if (settings) {
-    return settings;
-  }
+export const getSettings = () => {
+  settingsPromise = settingsPromise ?? loadSettings();
 
+  return settingsPromise;
+};
+
+/**
+ * Fetches settings.json and merges it with the defaults.
+ *
+ * @returns {Promise<object>} The settings.
+ */
+const loadSettings = async () => {
   try {
     // Fetch the settings
     const url = import.meta.env.DEV ? "/settings.json" : "../src/settings.json";
@@ -66,12 +73,10 @@ export const getSettings = async () => {
     }
 
     // Merge with defaults
-    settings = deepMerge(defaultSettings, await response.json());
+    return deepMerge(defaultSettings, await response.json());
   } catch (e) {
-    // If an error, return the defaults
+    // If an error, return a copy of the defaults
     console.error("Failed to load settings.json:", e);
-    settings = defaultSettings;
+    return structuredClone(defaultSettings);
   }
-
-  return settings;
 };

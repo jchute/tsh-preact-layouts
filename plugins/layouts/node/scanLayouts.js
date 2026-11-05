@@ -1,27 +1,28 @@
-import { normalizePath } from "vite";
-import path from "path";
 import fs from "fs";
+import path from "path";
+import { normalizePath } from "vite";
 
 /**
- * Returns all layouts sorted by name.
- * A layout is any top-level entry in the layouts directory that is either:
+ * Returns all project layouts sorted by name.
  *
- *   - a folder with an index file, ie. `Game/index.jsx`
- *   - a single file, ie. `Game.jsx`
+ * A layout is any top-level entry in the project's layouts directory, either:
  *
- * The following methods will allow you to prevent certain layouts from being included:
+ *   - a folder with an index file, e.g. `Game/index.jsx`
+ *   - a single file, e.g. `Game.jsx`
  *
- *   - Layouts starting with `_` (`_Game.jsx`)
- *   - Layouts starting with `.` (`.Game.jsx`)
- *   - Layouts with extra dots (`Game.test.jsx`)
+ * To prevent layouts from being included, use the following patterns:
  *
- * @param {string} directory Absolute path of the folder that holds layouts.
+ *   - Layouts starting with `_` e.g. `_Game.jsx`
+ *   - Layouts starting with `.` e.g. `.Game.jsx`
+ *   - Layouts with extra dots e.g. `Game.test.jsx`
+ *
+ * @param {string} directory Absolute path of the layouts directory.
  * @returns {
  *   errors: string[] - Any errors that occurred while getting the layouts
- *   layouts: {
+ *   layouts: array<{
  *     name: string - The layout's name
  *     file: string - The layout's entry file, relative to the layouts directory with forward slashes
- *   }[]
+ *   }>
  * }
  */
 export const getLayouts = (directory) => {
@@ -85,8 +86,8 @@ export const getLayouts = (directory) => {
 /**
  * Returns the export names of a layout's entry file.
  *
- * @param {import("vite").PluginContext} context The plugin context (`this` in a hook).
- * @param {string} directory Absolute path of the folder that holds the layouts.
+ * @param {import("vite").PluginContext} context The plugin context (use `this` in a hook).
+ * @param {string} directory Absolute path of the layouts directory.
  * @param {string} file The layout's entry file, relative to the layouts directory.
  * @returns {string[]|null} The export names, or null when unknown (e.g. on the dev server).
  */

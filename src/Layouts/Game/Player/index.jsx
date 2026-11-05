@@ -1,7 +1,6 @@
-import styles from "./styles.module.scss";
-import { DisplayName, DisplayTag, Score, Side, useSelector } from "@Components/TSH";
+import styles from "./player.module.scss";
+import { DisplayName, DisplayTag, Score, Side, useTeam } from "@Components/TSH";
 import { cx } from "@Utils/cx";
-import { getTeam } from "@State/selectors";
 
 /**
  * One side's half of the in-game scoreboard: score, sponsor or partner names, name and
@@ -13,7 +12,7 @@ import { getTeam } from "@State/selectors";
  * @param {number} props.team Which side to show (1 or 2).
  */
 export const Player = ({ className, flip = false, team }) => {
-  const color = useSelector(getTeam, { team })?.color;
+  const color = useTeam({ team })?.color;
 
   return (
     <div
@@ -21,7 +20,7 @@ export const Player = ({ className, flip = false, team }) => {
       style={{ "--team-color": color }}
     >
       <Score className={styles.score} team={team} />
-      <DisplayTag className={styles.tag} team={team} hide />
+      <DisplayTag className={styles.tag} team={team} />
       <DisplayName className={styles.name} team={team} />
       <Side className={styles.side} team={team} />
     </div>

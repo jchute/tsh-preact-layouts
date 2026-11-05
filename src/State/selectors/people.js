@@ -1,5 +1,6 @@
+import { SPONSOR_SEPARATOR, NAME_SEPARATOR } from "@Utils/format";
 import { DEFAULTS } from "./defaults";
-import { getScore } from "./score";
+import { getScoreboard } from "./scoreboard";
 import { getQueuedSet } from "./sets";
 
 /**
@@ -12,13 +13,19 @@ import { getQueuedSet } from "./sets";
  * - "playerList": the slots in TSH's player list.
  * - "bracket": the seeded slots in TSH's bracket.
  * - "teamBattle": the teams in TSH's team battle.
- * - "stationQueue": the two sides of an upcoming set on the station, picked with `queuedSet`.
+ * - "queuedSet": the two sides of an upcoming set, picked with `queuedSet`, from the station
+ *   queue or, with `queue="stream"`, the stream queue.
  *
- * Commentators share the player shape too, so `getPerson` returns either one.
+ * Commentators share the player shape too, so `getPerson` returns either one: with
+ * `source="commentary"` it reads the commentator picked with `commentator`, otherwise a player.
  */
 
 /**
- * @typedef {"scoreboard"|"playerList"|"bracket"|"teamBattle"|"stationQueue"} TeamSource
+ * @typedef {"scoreboard"|"playerList"|"bracket"|"teamBattle"|"queuedSet"} TeamSource
+ */
+
+/**
+ * @typedef {TeamSource|"commentary"} PersonSource
  */
 
 /**
@@ -26,23 +33,30 @@ import { getQueuedSet } from "./sets";
  * @property {number} [team] Which team, starting at 1. Defaults to 1.
  * @property {TeamSource} [source] Which part of TSH to read. Defaults to "scoreboard".
  * @property {number|string} [scoreboard] Which scoreboard, when `source` is "scoreboard" or
- * "stationQueue".
- * @property {number|string} [queuedSet] Which upcoming set, when `source` is "stationQueue".
+ * "queuedSet".
+ * @property {number|string} [queuedSet] Which upcoming set, when `source` is "queuedSet".
+ * @property {"station"|"stream"} [queue] Which queue, when `source` is "queuedSet".
  */
 
 /**
- * @typedef {TeamProps & { player?: number, commentator?: number, romanized?: boolean }} PersonProps
- * `player` picks a player on the team, starting at 1. `commentator` reads that commentator instead
- * of a player, ignoring the team props. `romanized` prefers Latin-script names where TSH has them.
+ * @typedef {Omit<TeamProps, "source"> & {
+ *   source?: PersonSource,
+ *   player?: number,
+ *   commentator?: number,
+ *   romanized?: boolean,
+ * }} PersonProps
+ * `player` picks a player on the team, starting at 1. With `source="commentary"`, `commentator`
+ * picks a commentator instead, starting at 1, and the team props are ignored. `romanized` prefers
+ * Latin-script names where TSH has them.
  */
 
 /** Where each `source` keeps its teams. */
 const teamSources = {
-  scoreboard: (tsh, props) => getScore(tsh, props)?.team,
+  scoreboard: (tsh, props) => getScoreboard(tsh, props)?.team,
   playerList: (tsh) => tsh?.player_list?.slot,
   bracket: (tsh) => tsh?.bracket?.players?.slot,
   teamBattle: (tsh) => tsh?.team_battle?.team,
-  stationQueue: (tsh, props) => getQueuedSet(tsh, props)?.team,
+  queuedSet: (tsh, props) => getQueuedSet(tsh, props)?.team,
 };
 
 /**
@@ -64,6 +78,16 @@ export const getTeams = (tsh, { source = "scoreboard", ...props } = {}) => {
  * @returns {object|undefined} The team.
  */
 export const getTeam = (tsh, { team = DEFAULTS.team, ...props } = {}) => getTeams(tsh, props)[team];
+
+/**
+ * Returns the games a team has won in the set. A team that hasn't won any, or is missing, counts
+ * as 0.
+ *
+ * @param {object|null} tsh The program_state.json payload.
+ * @param {TeamProps} [props]
+ * @returns {number} The score.
+ */
+export const getScore = (tsh, props) => getTeam(tsh, props)?.score || 0;
 
 /**
  * Returns a team's name. Each source keeps it in a different field: `teamName` on the scoreboard,
@@ -129,14 +153,14 @@ export const getCommentator = (tsh, { commentator = DEFAULTS.commentator } = {})
 };
 
 /**
- * Returns a commentator when `commentator` is given, otherwise a player.
+ * Returns a commentator when `source` is "commentary", otherwise a player.
  *
  * @param {object|null} tsh The program_state.json payload.
  * @param {PersonProps} [props]
  * @returns {object|undefined} The player or commentator.
  */
-export const getPerson = (tsh, { commentator, ...props } = {}) => {
-  return commentator != null ? getCommentator(tsh, { commentator }) : getPlayer(tsh, props);
+export const getPerson = (tsh, props = {}) => {
+  return props.source === "commentary" ? getCommentator(tsh, props) : getPlayer(tsh, props);
 };
 
 /**
@@ -178,12 +202,12 @@ export const getSponsor = (tsh, { romanized, ...props } = {}) => {
  * no sponsor. Unlike TSH's own `mergedName`, this supports `romanized`.
  *
  * @param {object|null} tsh The program_state.json payload.
- * @param {PersonProps & { separator?: string }} [props] `separator` goes between the sponsor and
- * gamertag. Defaults to " | ".
+ * @param {PersonProps & { sponsorSeparator?: string }} [props] `sponsorSeparator` goes
+ * between the sponsor and gamertag. Defaults to `SPONSOR_SEPARATOR`.
  * @returns {string} The merged name.
  */
-export const getMergedName = (tsh, { separator = " | ", ...props } = {}) => {
-  return [getSponsor(tsh, props), getGamertag(tsh, props)].filter(Boolean).join(separator);
+export const getMergedName = (tsh, { sponsorSeparator = SPONSOR_SEPARATOR, ...props } = {}) => {
+  return [getSponsor(tsh, props), getGamertag(tsh, props)].filter(Boolean).join(sponsorSeparator);
 };
 
 /**
@@ -204,13 +228,17 @@ export const hasRomanizedName = (tsh, props) => {
  * Returns the gamertags of everyone on a team joined together, e.g. "Jonch / Stag".
  *
  * @param {object|null} tsh The program_state.json payload.
- * @param {TeamProps & { separator?: string, romanized?: boolean }} [props] `separator` goes
- * between the names and defaults to " / ". `romanized` prefers the romanized version.
+ * @param {TeamProps & { playerNamesSeparator?: string, romanized?: boolean }} [props]
+ * `playerNamesSeparator` goes between the names and defaults to `NAME_SEPARATOR`. `romanized`
+ * prefers the romanized version.
  * @returns {string} The player names.
  */
-export const getPlayerNames = (tsh, { separator = " / ", romanized, ...props } = {}) => {
+export const getPlayerNames = (
+  tsh,
+  { playerNamesSeparator = NAME_SEPARATOR, romanized, ...props } = {},
+) => {
   return Object.values(getPlayers(tsh, props))
     .map((player) => readName(player, "name", romanized))
     .filter(Boolean)
-    .join(separator);
+    .join(playerNamesSeparator);
 };

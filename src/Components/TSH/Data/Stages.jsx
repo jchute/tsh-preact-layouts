@@ -1,26 +1,27 @@
-import { createKeyField, createList, createScope, createTextField } from "../createField";
-import { getRuleset, getStage, getStages } from "@State/selectors";
+import { createKeyField, createList, createTextField } from "../createField";
+import { getRuleset, getRulesetStages, getStage, readLocalizedName } from "@State/selectors";
 
 /**
- * The ruleset selected in TSH and its stage lists. Stage components take `stage` (starting at 0),
- * plus `counterpick` to read the counterpick list instead of the starters.
+ * Stages. Every stage component reads one stage from one of three places:
+ *
+ * - By default, the ruleset's starters, picked with `stage` (starting at 1). Add `counterpick`
+ *   for the counterpick list, or `all` for starters followed by counterpicks.
+ * - With `game`: the stage chosen for that game of the set, e.g. `<StageName game={2} />`.
+ * - With `selected`: the stage picked in TSH's stage strike, e.g. `<StageName selected />`.
+ *
+ * The stage strike components (`IfStageStruck`, `StageStruckBy`...) take the same props.
  */
 
 /** The ruleset's name, e.g. "Genesis Rules". */
 export const RulesetName = createKeyField(getRuleset)("name");
 
-/** Sets `stage` for everything inside. Takes `counterpick` too. */
-export const Stage = createScope("stage");
-
-/** Repeats its children for each starter stage, or counterpick stage with `counterpick`. */
-export const Stages = createList(getStages);
-
 /**
- * The stage's name. `locale` shows it in another language TSH knows, e.g. "fr" or "ja", falling
- * back to TSH's display name.
+ * Repeats its children for each of the ruleset's starters, passing the `stage` index. Takes
+ * `counterpick` or `all` to list the counterpicks, or both.
  */
-export const StageName = createTextField((tsh, { locale, ...props }) => {
-  const stage = getStage(tsh, props);
+export const Stages = createList(getRulesetStages);
 
-  return (locale && stage?.locale?.[locale]) || stage?.display_name || stage?.name;
+/** The stage's name. `locale` asks for another language TSH has, e.g. "fr" or "pt-BR". */
+export const StageName = createTextField((tsh, { locale, ...props }) => {
+  return readLocalizedName(getStage(tsh, props), locale);
 });

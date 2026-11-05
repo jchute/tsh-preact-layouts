@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
-import preact from "@preact/preset-vite";
 import path from "path";
-import { LayoutHTMLGenerator, LayoutVirtualModule } from "./plugins/layouts/index.js";
+import preact from "@preact/preset-vite";
+import { defineConfig } from "vite";
+import { LayoutHTMLGenerator, LayoutVirtualModule } from "./plugins/layouts";
 
 const layoutsDirectory = path.resolve(__dirname, "src/Layouts");
 
@@ -22,6 +22,7 @@ export default defineConfig({
       "@Assets": path.resolve(__dirname, "./src/Assets"),
       "@Components": path.resolve(__dirname, "./src/Components"),
       "@Layouts": layoutsDirectory,
+      "@Notices": path.resolve(__dirname, "./src/Notices"),
       "@State": path.resolve(__dirname, "./src/State"),
       "@Utils": path.resolve(__dirname, "./src/Utils"),
     },

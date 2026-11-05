@@ -1,4 +1,4 @@
-import styles from "./styles.module.scss";
+import styles from "./game.module.scss";
 import { Player } from "./Player";
 import { Round } from "./Round";
 import { Screen } from "@Components/Elements/Screen";
@@ -18,7 +18,9 @@ export const Game = () => {
       </div>
 
       <div className={styles.casters}>
-        <Commentators>{(commentator) => <MergedName commentator={commentator} />}</Commentators>
+        <Commentators>
+          {(commentator) => <MergedName source="commentary" commentator={commentator} />}
+        </Commentators>
       </div>
     </Screen>
   );
