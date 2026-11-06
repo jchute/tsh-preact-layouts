@@ -16,7 +16,7 @@ let settingsPromise = null;
  */
 const defaultSettings = {
   data_path: {
-    dev: "../../out/program_state.json",
+    dev: "http://localhost:5500/out/program_state.json",
     build: "../../out/program_state.json",
   },
   dev: {
