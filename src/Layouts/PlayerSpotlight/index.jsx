@@ -58,7 +58,7 @@ export const PlayerSpotlight = () => {
     <Screen className={styles.screen} gutter="3em" padding="4vw">
       <div className={styles.card} style={{ "--team-color": color }}>
         <div className={styles.cam}>
-          <Avatar className={styles.avatar} height="5em" hide />
+          <Avatar className={styles.avatar} height="5em" fill hide />
         </div>
 
         <div className={styles.profile}>
