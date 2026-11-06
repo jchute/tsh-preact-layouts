@@ -1,0 +1,93 @@
+// Editorial paper-and-ink look. --count is set by the layout to the number of casters.
+.screen {
+  --ink: #1d1a16;
+  --font-sans: "Gill Sans", "Trebuchet MS", system-ui, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --paper: #f4ecdc;
+  --rule: #b8321f;
+
+  align-content: space-between;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 1vw;
+  grid-template-rows: auto 1fr;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  gap: 1.5em;
+}
+
+.kicker,
+.tournament {
+  background: var(--paper);
+  padding: 0.2em 0.9em;
+}
+
+.kicker {
+  border-bottom: 0.2em solid var(--rule);
+  font-family: var(--font-sans);
+  font-size: 1.4em;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.tournament {
+  font-size: 1.2em;
+  font-style: italic;
+}
+
+.desk {
+  align-self: end;
+  display: grid;
+  gap: 2vw;
+  grid-template-columns: repeat(var(--count, 2), minmax(0, 1fr));
+}
+
+.caster {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  margin: 0;
+}
+
+.slot {
+  aspect-ratio: 16 / 9;
+  border: 0.5em solid var(--paper);
+  border-bottom: 0;
+}
+
+.plate {
+  background: var(--paper);
+  border-top: 0.25em solid var(--rule);
+  display: grid;
+  gap: 0.1em;
+  padding: 0.8em 1.2em 1em;
+}
+
+.sponsor {
+  color: var(--rule);
+  font-family: var(--font-sans);
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.name {
+  font-size: 2.6em;
+  font-weight: 700;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  font-family: var(--font-sans);
+  font-size: 1.05em;
+  gap: 1.2em;
+  opacity: 0.75;
+}

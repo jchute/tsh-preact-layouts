@@ -1,0 +1,159 @@
+// Slow animated gradient. Change --stop-* to recolor it and --drift to change the speed.
+.screen {
+  --drift: 24s;
+  --font: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --muted: rgb(255 255 255 / 70%);
+  --stop-1: #1b1464;
+  --stop-2: #7b2ff7;
+  --stop-3: #f107a3;
+  --stop-4: #0f9bd7;
+  --text: #fff;
+
+  align-content: space-between;
+  animation: drift var(--drift) ease-in-out infinite alternate;
+  background: linear-gradient(120deg, var(--stop-1), var(--stop-2), var(--stop-3), var(--stop-4));
+  background-size: 300% 300%;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-rows: auto 1fr auto auto;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  gap: 1.2em;
+}
+
+.tournament {
+  display: block;
+  font-size: 2.2em;
+  font-weight: 700;
+}
+
+.event {
+  color: var(--muted);
+  display: flex;
+  font-size: 1.2em;
+  gap: 1em;
+}
+
+.main {
+  align-content: center;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: 8em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 0.05em 0.5em rgb(0 0 0 / 30%);
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 2em;
+  margin: 0.4em 0 0;
+}
+
+.lower {
+  align-items: stretch;
+  display: grid;
+  gap: 2em;
+  grid-template-columns: 1fr auto;
+}
+
+.notes {
+  display: grid;
+  gap: 1em;
+  grid-template-columns: 1fr 1fr;
+}
+
+.note {
+  background: rgb(0 0 0 / 28%);
+  border-radius: 0.8em;
+  display: grid;
+  gap: 0.3em;
+  padding: 1em 1.2em;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.noteTitle {
+  font-size: 1.3em;
+  font-weight: 700;
+}
+
+.noteBody {
+  color: var(--muted);
+  font-size: 1.1em;
+  white-space: pre-line;
+}
+
+.next {
+  background: rgb(0 0 0 / 40%);
+  border-radius: 0.8em;
+  display: grid;
+  gap: 0.4em;
+  min-width: 24em;
+  padding: 1em 1.4em;
+}
+
+.nextLabel {
+  color: var(--muted);
+  font-size: 1em;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.nextPlayers {
+  align-items: baseline;
+  display: flex;
+  font-size: 1.8em;
+  font-weight: 700;
+  gap: 0.5em;
+}
+
+.nextVs {
+  font-size: 0.6em;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.nextMeta {
+  color: var(--muted);
+  display: flex;
+  font-size: 1.1em;
+  gap: 1em;
+}
+
+.footer {
+  color: var(--muted);
+  display: flex;
+  font-size: 1.1em;
+  gap: 2em;
+  justify-content: space-between;
+}
+
+@keyframes drift {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen {
+    animation: none;
+  }
+}

@@ -1,21 +1,39 @@
-export { Alias } from "./Data/Alias";
-export { Avatar } from "./Data/Avatar";
-export { BestOf } from "./Data/BestOf";
-export { CasterName } from "./Data/CasterName";
-export { Character } from "./Data/Character";
-export { CharacterName } from "./Data/CharacterName";
-export { DisplayName } from "./Data/DisplayName";
-export { DisplayTag } from "./Data/DisplayTag";
-export { Match } from "./Data/Match";
-export { Name } from "./Data/Name";
-export { Phase } from "./Data/Phase";
-export { Pronoun } from "./Data/Pronoun";
-export { Score } from "./Data/Score";
-export { Seed } from "./Data/Seed";
-export { SetScore } from "./Data/SetScore";
-export { Side } from "./Data/Side";
-export { Tag } from "./Data/Tag";
-export { TeamName } from "./Data/TeamName";
-export { TournamentName } from "./Data/TournamentName";
-export { UpsetFactor } from "./Data/UpsetFactor";
-export { WinRatio } from "./Data/WinRatio";
+/**
+ * Components that show TSH's live data in a layout.
+ *
+ * Each component is a text field, an image field, a list or a condition, as defined in `createField`.
+ *
+ * A global scope can be overridden by using the `<Scope>` component or with props on any component.
+ *
+ * @example
+ * <Scope scoreboard={2} team={1}>
+ *   <DisplayName />
+ *   <Characters>
+ *     {(character) => <CharacterImage character={character} asset="base_files/icon" />}
+ *   </Characters>
+ * </Scope>
+ */
+export * from "./Data/Bracket";
+export * from "./Data/Characters";
+export * from "./Data/CompletedSets";
+export * from "./Data/Games";
+export * from "./Data/History";
+export * from "./Data/LastSets";
+export * from "./Data/Match";
+export * from "./Data/Person";
+export * from "./Data/QueuedSets";
+export * from "./Data/RecentSets";
+export * from "./Data/Stages";
+export * from "./Data/StageStrike";
+export * from "./Data/Team";
+export * from "./Data/TeamBattle";
+export * from "./Data/Tournament";
+export {
+  createCondition,
+  createImageField,
+  createKeyField,
+  createList,
+  createTextField,
+  Scope,
+} from "./createField";
+export { useTSH } from "@State/tsh";

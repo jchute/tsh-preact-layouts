@@ -1,0 +1,139 @@
+// Angled corner plates with game pips.
+.screen {
+  --fallback-1: #f2542d;
+  --fallback-2: #1f9bde;
+  --font: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --pip-off: rgb(255 255 255 / 22%);
+  --pip-on: #fff;
+  --plate: #12151c;
+  --text: #fff;
+
+  align-content: start;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.plate {
+  align-items: center;
+  background: var(--plate);
+  border-top: 0.3em solid var(--team-color, var(--fallback));
+  display: grid;
+  gap: 0.2em 0.9em;
+  min-width: 24em;
+  padding: 0.8em 2.4em 0.9em 1.4em;
+
+  &.left {
+    --fallback: var(--fallback-1);
+
+    clip-path: polygon(0 0, 100% 0, calc(100% - 1.6em) 100%, 0 100%);
+    grid-template-areas:
+      "flag names losers"
+      "pips pips pips";
+    grid-template-columns: auto 1fr auto;
+    justify-self: start;
+  }
+
+  &.right {
+    --fallback: var(--fallback-2);
+
+    clip-path: polygon(1.6em 0, 100% 0, 100% 100%, 0 100%);
+    grid-template-areas:
+      "losers names flag"
+      "pips pips pips";
+    grid-template-columns: auto 1fr auto;
+    justify-self: end;
+    padding: 0.8em 1.4em 0.9em 2.4em;
+    text-align: right;
+
+    .pips {
+      justify-content: end;
+    }
+  }
+}
+
+.flag {
+  grid-area: flag;
+}
+
+.names {
+  grid-area: names;
+  min-width: 0;
+}
+
+.name,
+.tag,
+.round,
+.length {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name {
+  font-size: 2em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.tag {
+  font-size: 0.9em;
+  letter-spacing: 0.14em;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.losers {
+  background: var(--text);
+  border-radius: 0.2em;
+  color: var(--plate);
+  font-size: 0.9em;
+  font-weight: 800;
+  grid-area: losers;
+  padding: 0.1em 0.45em;
+}
+
+.pips {
+  display: flex;
+  gap: 0.45em;
+  grid-area: pips;
+  margin-top: 0.3em;
+}
+
+.pip {
+  background: var(--pip-off);
+  height: 0.7em;
+  transform: skewX(-24deg);
+  transition: background 0.3s ease;
+  width: 2.4em;
+
+  &.won {
+    background: var(--pip-on);
+  }
+}
+
+.tab {
+  background: var(--text);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1em) 100%, 1em 100%);
+  color: var(--plate);
+  display: grid;
+  min-width: 14em;
+  padding: 0.4em 2.2em 0.7em;
+  text-align: center;
+}
+
+.round {
+  font-size: 1.1em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.length {
+  font-size: 0.8em;
+  letter-spacing: 0.2em;
+  opacity: 0.6;
+}

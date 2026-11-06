@@ -1,0 +1,147 @@
+// Dark tactical grid. Team colors only tint the turn banner and strike stamps.
+.screen {
+  --bg: #101216;
+  --fallback-1: #ff5d5d;
+  --fallback-2: #4da3ff;
+  --font: "Eurostile", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  --muted: rgb(255 255 255 / 55%);
+  --pick: #ffd24a;
+  --text: #fff;
+
+  align-content: start;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  gap: 1.5em;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  gap: 1.5em;
+  justify-content: space-between;
+}
+
+.ruleset {
+  color: var(--muted);
+  font-size: 1.4em;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.game {
+  font-size: 2.2em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.banner {
+  align-items: baseline;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 40%, transparent),
+    transparent 80%
+  );
+  border-left: 0.5em solid var(--accent);
+  display: flex;
+  font-size: 2.6em;
+  font-weight: 700;
+  gap: 0.4em;
+  padding: 0.2em 0.6em;
+  text-transform: uppercase;
+
+  &.one {
+    --accent: var(--fallback-1);
+  }
+
+  &.two {
+    --accent: var(--fallback-2);
+  }
+}
+
+.turnName {
+  color: var(--accent);
+  filter: brightness(1.3);
+}
+
+.grid {
+  display: grid;
+  gap: 1.2em;
+  grid-template-columns: repeat(auto-fill, minmax(17em, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stage {
+  background: rgb(255 255 255 / 5%);
+  border: 0.2em solid transparent;
+  border-radius: 0.6em;
+  display: grid;
+  gap: 0.5em;
+  padding: 0.5em;
+  text-align: center;
+
+  &.struck,
+  &.banned {
+    opacity: 0.45;
+  }
+
+  &.selected {
+    border-color: var(--pick);
+    box-shadow: 0 0 1.5em rgb(255 210 74 / 40%);
+  }
+}
+
+.picture {
+  aspect-ratio: 16 / 9;
+  background: rgb(0 0 0 / 40%);
+  border-radius: 0.4em;
+  overflow: hidden;
+  position: relative;
+}
+
+.stamp {
+  align-content: center;
+  background: rgb(0 0 0 / 55%);
+  display: grid;
+  font-size: 1.4em;
+  font-weight: 800;
+  inset: 0;
+  justify-items: center;
+  letter-spacing: 0.2em;
+  position: absolute;
+  text-transform: uppercase;
+
+  &.one {
+    --accent: var(--fallback-1);
+
+    color: var(--accent);
+  }
+
+  &.two {
+    --accent: var(--fallback-2);
+
+    color: var(--accent);
+  }
+
+  &.pick {
+    background: rgb(255 210 74 / 25%);
+    color: var(--pick);
+  }
+}
+
+.striker {
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+}
+
+.stageName {
+  font-size: 1.15em;
+  font-weight: 600;
+}
+
+.struck .stageName {
+  text-decoration: line-through;
+}

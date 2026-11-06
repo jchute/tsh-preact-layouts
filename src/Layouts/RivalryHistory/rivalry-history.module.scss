@@ -1,0 +1,153 @@
+// Dark ledger with a gold highlight for the winner of each meeting.
+.screen {
+  --accent: #e8b84a;
+  --bg: linear-gradient(180deg, #14161d, #0c0d12);
+  --font: "Avenir Next", "Segoe UI", system-ui, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --line: rgb(255 255 255 / 12%);
+  --muted: rgb(255 255 255 / 55%);
+  --text: #f1f1f3;
+
+  align-content: start;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  gap: 2em;
+}
+
+.header {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 2em;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  padding-bottom: 1.4em;
+}
+
+.name {
+  font-size: 3em;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.right {
+    text-align: right;
+  }
+}
+
+.record {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 0.9em;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.h2h {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 3.6em;
+  font-weight: 700;
+}
+
+.round {
+  color: var(--muted);
+  font-size: 1em;
+}
+
+.list {
+  display: grid;
+  gap: 0.6em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  align-items: center;
+  background: rgb(255 255 255 / 4%);
+  border-radius: 0.6em;
+  display: grid;
+  gap: 1.2em;
+  grid-template-columns: 11em minmax(0, 1fr) 11em 6em 11em;
+  padding: 0.8em 1.2em;
+}
+
+.when {
+  display: grid;
+}
+
+.date {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+.online {
+  color: var(--muted);
+  font-size: 0.75em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.what {
+  display: grid;
+  min-width: 0;
+}
+
+.tournament {
+  font-size: 1.2em;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event {
+  color: var(--muted);
+  display: flex;
+  font-size: 0.9em;
+  gap: 0.6em;
+}
+
+.side {
+  border-bottom: 0.2em solid transparent;
+  display: flex;
+  justify-content: start;
+  opacity: 0.55;
+  padding-bottom: 0.3em;
+
+  &.right {
+    justify-content: end;
+  }
+
+  &.winner {
+    border-color: var(--accent);
+    opacity: 1;
+  }
+}
+
+.played {
+  display: inline-flex;
+  gap: 0.3em;
+}
+
+.score {
+  font-family: var(--font-mono);
+  font-size: 1.4em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.notice {
+  color: var(--muted);
+  font-size: 1.4em;
+  margin: 2em 0 0;
+  text-align: center;
+}

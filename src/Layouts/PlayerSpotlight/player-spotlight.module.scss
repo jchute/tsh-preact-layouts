@@ -1,0 +1,158 @@
+// Profile card on a soft gradient. The camera slot is the large transparent square.
+.screen {
+  --font: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  --muted: rgb(255 255 255 / 60%);
+  --panel: rgb(18 16 30 / 90%);
+  --text: #fff;
+
+  align-items: center;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+}
+
+.card {
+  --accent: var(--team-color, #7c5cff);
+
+  background: var(--panel);
+  border-left: 0.5em solid var(--accent);
+  border-radius: 1.2em;
+  display: grid;
+  gap: 3em;
+  grid-template-columns: 34em minmax(0, 1fr);
+  padding: 2.5em;
+}
+
+// Transparent so the camera behind the browser source shows through
+.cam {
+  align-self: start;
+  aspect-ratio: 1;
+  border: 0.3em solid var(--accent);
+  border-radius: 1em;
+  position: relative;
+}
+
+.avatar {
+  border: 0.25em solid var(--panel);
+  border-radius: 50%;
+  bottom: -1.5em;
+  position: absolute;
+  right: -1.5em;
+}
+
+.profile {
+  display: grid;
+  gap: 1.8em;
+  min-width: 0;
+}
+
+.sponsor {
+  color: var(--accent);
+  display: block;
+  filter: brightness(1.4);
+  font-size: 1.4em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.name {
+  display: block;
+  font-size: 5em;
+  font-weight: 800;
+  line-height: 1.05;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.2em;
+  gap: 0.4em 1.2em;
+  margin-top: 0.4em;
+}
+
+.stats {
+  display: grid;
+  gap: 1em;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.stat {
+  background: rgb(255 255 255 / 6%);
+  border-radius: 0.8em;
+  display: grid;
+  padding: 0.8em 1.2em;
+}
+
+.value {
+  font-size: 2.4em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.statLabel,
+.heading {
+  color: var(--muted);
+  font-size: 0.9em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.loadout {
+  display: grid;
+  gap: 2em;
+  grid-template-columns: 1fr 1fr;
+}
+
+.group {
+  display: grid;
+  gap: 0.6em;
+}
+
+.icons,
+.controller {
+  align-items: center;
+  display: flex;
+  gap: 0.6em;
+}
+
+.controller {
+  font-size: 1.3em;
+}
+
+.results {
+  display: grid;
+  gap: 0.4em;
+  list-style: none;
+  margin: 0.6em 0 0;
+  padding: 0;
+}
+
+.result {
+  align-items: baseline;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  display: grid;
+  gap: 1em;
+  grid-template-columns: 4em 1fr auto;
+  padding-bottom: 0.4em;
+}
+
+.place {
+  color: var(--accent);
+  filter: brightness(1.4);
+  font-size: 1.4em;
+  font-weight: 800;
+}
+
+.tournament {
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.event {
+  color: var(--muted);
+}

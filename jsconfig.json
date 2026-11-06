@@ -1,11 +1,16 @@
 {
-  "baseUrl": "src",
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
-      "@Assets/*": ["/Assets/*"],
-      "@Components/*": ["/Components/*"],
-      "@Screens/*": ["/Screens/*"],
-      "@Utils/*": ["/Utils/*"]
+      "@Assets/*": ["./src/Assets/*"],
+      "@Components/*": ["./src/Components/*"],
+      "@Layouts/*": ["./src/Layouts/*"],
+      "@Notices/*": ["./src/Notices/*"],
+      "@State/*": ["./src/State/*"],
+      "@Utils/*": ["./src/Utils/*"]
     }
   },
   "include": ["src"]

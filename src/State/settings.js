@@ -1,0 +1,81 @@
+/** The settings request, cached on the first `getSettings` call so later calls share it. */
+let settingsPromise = null;
+
+/**
+ * Default options for settings.json, used for anything the file leaves out.
+ *
+ * {
+ *   data_path: {
+ *     dev {string}: path to program_state.json,
+ *     build {string}: path to program_state.json,
+ *   },
+ *   dev: {
+ *     showDevBackground {boolean}: whether to show a dev background, so transparent overlays are easier to see.
+ *   },
+ * }
+ */
+const defaultSettings = {
+  data_path: {
+    dev: "../../out/program_state.json",
+    build: "../../out/program_state.json",
+  },
+  dev: {
+    showDevBackground: true,
+  },
+};
+
+/**
+ * Combines two settings objects, with `source` winning. Nested objects are merged key by key
+ * rather than replaced, while arrays and other values are replaced outright.
+ *
+ * @param {object} target The base values, left unchanged.
+ * @param {object} source The overriding values.
+ * @returns {object} A new merged object.
+ */
+const deepMerge = (target, source) => {
+  const result = structuredClone(target);
+  for (const key in source) {
+    if (typeof source[key] === "object" && source[key] !== null && !Array.isArray(source[key])) {
+      result[key] = deepMerge(result[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+};
+
+/**
+ * Loads settings.json and fills any gaps with the defaults. The result is cached, and the
+ * defaults are used alone if the file is missing or invalid.
+ *
+ * @returns {Promise<object>} The settings.
+ */
+export const getSettings = () => {
+  settingsPromise = settingsPromise ?? loadSettings();
+
+  return settingsPromise;
+};
+
+/**
+ * Fetches settings.json and merges it with the defaults.
+ *
+ * @returns {Promise<object>} The settings.
+ */
+const loadSettings = async () => {
+  try {
+    // Fetch the settings
+    const response = await fetch(`${import.meta.env.BASE_URL}settings.json`, { cache: "no-store" });
+
+    // If the response failed, throw error
+    if (!response.ok) {
+      throw new Error("settings.json fetch failed");
+    }
+
+    // Merge with defaults
+    return deepMerge(defaultSettings, await response.json());
+  } catch (e) {
+    // If an error, return a copy of the defaults
+    console.error("Failed to load settings.json:", e);
+    return structuredClone(defaultSettings);
+  }
+};

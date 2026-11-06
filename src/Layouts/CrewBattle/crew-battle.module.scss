@@ -1,0 +1,172 @@
+// Retro arcade look: monospace, scanlines and neon edges.
+.screen {
+  --active: #fff36b;
+  --bg: #07060f;
+  --fallback-1: #ff3d81;
+  --fallback-2: #39e6ff;
+  --font: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --muted: rgb(255 255 255 / 55%);
+  --text: #f5f3ff;
+
+  align-items: start;
+  background:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 3%) 0 1px, transparent 1px 4px), var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.crew {
+  display: grid;
+  gap: 1em;
+
+  &.one {
+    --neon: var(--fallback-1);
+  }
+
+  &.two {
+    --neon: var(--fallback-2);
+  }
+
+  &.flip {
+    text-align: right;
+
+    .header {
+      flex-direction: row-reverse;
+    }
+
+    .totals {
+      justify-items: start;
+    }
+
+    .icon {
+      order: 3;
+    }
+
+    .counter {
+      order: -1;
+    }
+  }
+}
+
+.header {
+  align-items: end;
+  border-bottom: 0.2em solid var(--neon);
+  box-shadow: 0 0.6em 1em -0.6em var(--neon);
+  display: flex;
+  gap: 1em;
+  justify-content: space-between;
+  padding-bottom: 0.5em;
+}
+
+.team {
+  color: var(--neon);
+  font-size: 2.6em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.totals {
+  align-items: baseline;
+  display: grid;
+  gap: 0 0.5em;
+  grid-template-columns: auto auto;
+  justify-items: end;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 0.8em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.total {
+  font-size: 1.6em;
+  font-weight: 700;
+}
+
+.roster {
+  display: grid;
+  gap: 0.6em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fighter {
+  align-items: center;
+  background: rgb(255 255 255 / 5%);
+  border: 0.15em solid transparent;
+  display: grid;
+  gap: 0.8em;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 0.5em 0.8em;
+  transition:
+    border-color 0.2s,
+    opacity 0.2s;
+
+  &.active {
+    background: rgb(255 243 107 / 12%);
+    border-color: var(--active);
+    box-shadow: 0 0 1.2em rgb(255 243 107 / 35%);
+  }
+
+  &.dead {
+    opacity: 0.35;
+
+    .name {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.icon {
+  display: inline-flex;
+  min-width: 2.4em;
+}
+
+.name {
+  font-size: 1.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.counter {
+  color: var(--neon);
+  font-size: 2.2em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  min-width: 1.2em;
+  text-align: center;
+}
+
+.center {
+  display: grid;
+  gap: 0.4em;
+  justify-items: center;
+  max-width: 16em;
+  min-width: 10em;
+  text-align: center;
+}
+
+.round {
+  font-size: 1.4em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.phase,
+.mode {
+  color: var(--muted);
+  font-size: 0.9em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}

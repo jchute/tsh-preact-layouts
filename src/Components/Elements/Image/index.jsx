@@ -1,26 +1,31 @@
-import styles from "./styles.module.scss";
+import { cx } from "@Utils/cx";
+import styles from "./image.module.scss";
 
-export const Image = ({ className = "", height, hide = false, source, width }) => {
-  // Do nothing if we are hiding empty source and there is no source
-  if (hide && !source) {
-    return;
+/**
+ * Display an image with options for sizing.
+ *
+ * @param {object} props
+ * @param {string} [props.alt] Alternative text. Defaults to empty, marking the image as decorative.
+ * @param {string} [props.className] Extra classes for styling.
+ * @param {string|number} [props.height] CSS height, defaults to the width or 1em.
+ * @param {string} [props.hide] Whether to hide the element if the src is empty.
+ * @param {string} [props.src] Image URL.
+ * @param {string|number} [props.width] CSS width, defaults to the height or 1em.
+ */
+export const Image = ({ alt = "", className, height, hide, src, width }) => {
+  if (!src && hide) {
+    return null;
   }
 
-  const style = {
-    "--src": `url("${source}")`,
-  };
-
-  if (width) {
-    style.width = width;
-  }
-
-  if (height) {
-    style.height = height;
-  } else {
-    if (width) {
-      style.height = width;
-    }
-  }
-
-  return <span className={`${styles.image} ${className}`} style={style}></span>;
+  return (
+    <img
+      alt={alt}
+      className={cx(styles.image, className)}
+      src={src}
+      style={{
+        height: height ?? width,
+        width: width ?? height,
+      }}
+    />
+  );
 };

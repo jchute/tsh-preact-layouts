@@ -1,0 +1,146 @@
+// Warm sunset cards. --count is set by the layout to the number of games the set can last.
+.screen {
+  --bg: linear-gradient(135deg, #2b1740, #5a1f4a 55%, #9a3b3b);
+  --fallback-1: #ff8a5b;
+  --fallback-2: #5bc8ff;
+  --font: "Futura", "Century Gothic", "Trebuchet MS", system-ui, sans-serif;
+  --muted: rgb(255 255 255 / 60%);
+  --text: #fff;
+
+  align-content: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  gap: 3em;
+}
+
+.header {
+  align-items: center;
+  display: grid;
+  gap: 2em;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.name {
+  font-size: 3em;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.right {
+    text-align: right;
+  }
+}
+
+.summary {
+  display: grid;
+  justify-items: center;
+}
+
+.scores {
+  align-items: center;
+  display: flex;
+  gap: 0.4em;
+}
+
+.score {
+  font-size: 5em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dash {
+  font-size: 3em;
+  opacity: 0.5;
+}
+
+.round {
+  font-size: 1.4em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.length {
+  color: var(--muted);
+  font-size: 1em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.cards {
+  display: grid;
+  gap: 1.5em;
+  grid-template-columns: repeat(var(--count, 3), minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  background: rgb(0 0 0 / 35%);
+  border-radius: 1em;
+  border-top: 0.4em solid var(--team-color, var(--fallback, var(--muted)));
+  display: grid;
+  gap: 0.6em;
+  padding: 1.2em;
+  text-align: center;
+
+  &.one {
+    --fallback: var(--fallback-1);
+  }
+
+  &.two {
+    --fallback: var(--fallback-2);
+  }
+
+  &.tie {
+    --fallback: #d6d6d6;
+  }
+
+  &.pending {
+    opacity: 0.55;
+  }
+}
+
+.number {
+  color: var(--muted);
+  font-size: 1em;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.picture {
+  align-items: center;
+  aspect-ratio: 16 / 9;
+  background: rgb(255 255 255 / 6%);
+  border-radius: 0.6em;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stageName {
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.outcome {
+  font-size: 1.2em;
+  min-height: 1.4em;
+}
+
+.winnerName {
+  color: var(--team-color, var(--fallback));
+  filter: brightness(1.25);
+  font-weight: 700;
+}
+
+.notice {
+  color: var(--muted);
+  font-size: 1.4em;
+  margin: 0;
+  text-align: center;
+}
