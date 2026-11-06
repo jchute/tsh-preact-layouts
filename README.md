@@ -499,7 +499,7 @@ Show teams and players with `source="teamBattle"`.
 
 ### Helpers
 
-`Scope`, `useTSH`, `useTeam`, `useBracketSetSlot`, and the factories `createTextField`, `createImageField`, `createKeyField`, `createList` and `createCondition`. `useSelector` is imported from `@Components/TSH/createField`.
+`Scope`, `If`, `useTSH`, `useTeam`, `useBracketSetSlot`, and the factories `createTextField`, `createImageField`, `createKeyField`, `createList` and `createCondition`. `useSelector` is imported from `@Components/TSH/createField`.
 
 ## Quick start examples
 
@@ -658,6 +658,25 @@ const Player = ({ team }) => (
 
 - `fallback` replaces an empty value, `format` only runs on a real value.
 - `<IfLosers not>` renders its children when the condition is false.
+
+To drop a label or wrapper when data is missing, wrap it in `<If>`, which works with any text field, image field or list:
+
+```jsx
+import { Controller, ControllerIcon, If } from "@Components/TSH";
+
+<If anyOf={[Controller, ControllerIcon]}>
+  <h3>Controller</h3>
+  <ControllerIcon hide />
+  <Controller hide />
+</If>;
+```
+
+- `of={Seed}` tests one field or list. `anyOf={[A, B]}` shows the children when at least one has something to show.
+- `not` renders the children when nothing has content.
+- `fallback` is rendered instead of the children when the condition isn't met, e.g. `<If of={History} fallback={<li>No results</li>}>`.
+- A field has nothing to show when its value is `null`, `undefined` or `""` (`0` counts as a value). A list has nothing to show when it would render no items, so empty character slots don't count.
+- Other props (`team`, `main`, ...) pick the data and apply to the children as well, like `<Scope>`.
+- Keep `hide` on the fields inside, so an icon can show without a name.
 
 ### 6. Reuse scope with `<Scope>`
 

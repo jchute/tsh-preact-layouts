@@ -3,6 +3,7 @@ import { Image } from "@Components/Elements/Image";
 import { Text } from "@Components/Elements/Text";
 import { ScopeContext, useResolveScopeProps } from "@State/scope";
 import { useTSH } from "@State/tsh";
+import { isEmpty } from "@Utils/isEmpty";
 
 /**
  * This file contains all factories that turn a selector into a component.
@@ -64,12 +65,16 @@ export const Scope = ({ children, ...props }) => {
  * @param {import("preact").ComponentType} Component Element used to show the value.
  * @param {string} valueProp Prop on `Component` that receives the value.
  */
-const createField =
-  (Component, valueProp) =>
-  (select, defaults = {}) =>
-  (props) => (
+const createField = (Component, valueProp) => (select, defaults) => {
+  const Field = (props) => (
     <Component {...defaults} {...props} {...{ [valueProp]: useSelector(select, props) }} />
   );
+
+  // Lets `If` ask the field whether it has a value
+  Field.select = select;
+
+  return Field;
+};
 
 /**
  * Builds a component that shows the selector's value as text.
@@ -119,9 +124,8 @@ export const createKeyField = (getObject) => (key, defaults) =>
  * @param {{ skip?: (item: any) => boolean }} [options] `skip` leaves out items, such as TSH's empty
  * placeholders.
  */
-export const createList =
-  (select, { skip } = {}) =>
-  ({ children, limit, ...props }) => {
+export const createList = (select, { skip } = {}) => {
+  const List = ({ children, limit, ...props }) => {
     const items = useSelector(select, props);
 
     if (typeof children !== "function") {
@@ -138,6 +142,14 @@ export const createList =
       .map(([key, item]) => <Fragment key={key}>{children(key, item)}</Fragment>);
   };
 
+  // Lets `If` ask the list whether it would render any items
+  List.select = select;
+  List.skip = skip;
+  List.isList = true;
+
+  return List;
+};
+
 /**
  * Builds a component that renders its children only when the selector's value is truthy.
  *
@@ -152,3 +164,55 @@ export const createCondition =
   (select) =>
   ({ children, not = false, ...props }) =>
     Boolean(useSelector(select, props)) !== not ? children : null;
+
+/** Whether a text field, image field or list has anything to show. */
+const hasContent = (component, tsh, props) => {
+  const value = component.select(tsh, props);
+
+  // If the component is a list, check if it has any items to show
+  if (component.isList) {
+    return Object.values(value ?? {}).some((item) => !component.skip?.(item));
+  }
+
+  return !isEmpty(value);
+};
+
+/**
+ * Renders its children only when there is something to show.
+ *
+ * - `of`: one field or list.
+ * - `anyOf`: an array of them. The children show when at least one has something to show.
+ * - `fallback`: rendered instead of the children when the condition isn't met.
+ * - `not`: invert the condition.
+ *
+ * @example
+ * <If anyOf={[Controller, ControllerIcon]}>
+ *   <h3>Controller</h3>
+ *   <ControllerIcon hide />
+ *   <Controller hide />
+ * </If>
+ *
+ * @param {object} props
+ * @param {import("preact").ComponentType} [props.of] One field or list to test.
+ * @param {import("preact").ComponentType[]} [props.anyOf] Fields or lists to test.
+ * @param {import("preact").ComponentChildren} [props.fallback] Shown when the condition isn't met.
+ * @param {boolean} [props.not] Render when nothing has content.
+ */
+export const If = ({ anyOf, children, fallback = null, not = false, of, ...props }) => {
+  const tsh = useTSH();
+  const resolved = useResolveScopeProps(props);
+  const components = [of, anyOf].flat().filter((component) => component != null);
+
+  if (!components.length || components.some((component) => !component.select)) {
+    console.error(
+      "If needs a TSH field or list, e.g. <If of={Seed}> or <If anyOf={[Controller, ControllerIcon]}>",
+    );
+    return null;
+  }
+
+  const show = components.some((component) => hasContent(component, tsh, resolved));
+
+  const content = show !== not ? children : fallback;
+
+  return isEmpty(content) ? null : <Scope {...props}>{content}</Scope>;
+};

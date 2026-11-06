@@ -105,7 +105,7 @@
 .loadout {
   display: grid;
   gap: 2em;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 }
 
 .group {

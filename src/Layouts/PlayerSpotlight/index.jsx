@@ -14,6 +14,7 @@ import {
   HistoryEvent,
   HistoryPlacement,
   HistoryTournament,
+  If,
   Pronoun,
   RealName,
   Record,
@@ -64,13 +65,15 @@ export const PlayerSpotlight = () => {
           <header className={styles.header}>
             <DisplayTag className={styles.sponsor} hide />
             <DisplayName className={styles.name} />
-            <div className={styles.meta}>
-              <CountryFlag height="1.2em" hide width="1.8em" />
-              <City hide />
-              <Pronoun hide />
-              <RealName hide />
-              <Twitter format={(handle) => `@${String(handle).replace(/^@/, "")}`} hide />
-            </div>
+            <If anyOf={[CountryFlag, City, Pronoun, RealName, Twitter]}>
+              <div className={styles.meta}>
+                <CountryFlag height="1.2em" hide width="1.8em" />
+                <City hide />
+                <Pronoun hide />
+                <RealName hide />
+                <Twitter format={(handle) => `@${String(handle).replace(/^@/, "")}`} hide />
+              </div>
+            </If>
           </header>
 
           <div className={styles.stats}>
@@ -79,46 +82,53 @@ export const PlayerSpotlight = () => {
             <Stat as={WinPercentage} label="Win rate" />
           </div>
 
-          <div className={styles.loadout}>
-            <div className={styles.group}>
-              <span className={styles.heading}>Mains</span>
-              <div className={styles.icons}>
-                <Characters main>
-                  {(character) => (
-                    <CharacterImage
-                      asset={ICON_ASSET}
-                      character={character}
-                      height="2.6em"
-                      hide
-                      main
-                    />
-                  )}
-                </Characters>
-              </div>
+          <If anyOf={[Characters, Controller, ControllerIcon]} main>
+            <div className={styles.loadout}>
+              <If of={Characters}>
+                <div className={styles.group}>
+                  <span className={styles.heading}>Mains</span>
+                  <div className={styles.icons}>
+                    <Characters>
+                      {(character) => (
+                        <CharacterImage
+                          asset={ICON_ASSET}
+                          character={character}
+                          height="2.6em"
+                          hide
+                        />
+                      )}
+                    </Characters>
+                  </div>
+                </div>
+              </If>
+              <If anyOf={[Controller, ControllerIcon]}>
+                <div className={styles.group}>
+                  <span className={styles.heading}>Controller</span>
+                  <div className={styles.controller}>
+                    <ControllerIcon height="2.4em" hide />
+                    <Controller hide />
+                  </div>
+                </div>
+              </If>
             </div>
-            <div className={styles.group}>
-              <span className={styles.heading}>Controller</span>
-              <div className={styles.controller}>
-                <ControllerIcon height="2.4em" hide />
-                <Controller hide />
-              </div>
-            </div>
-          </div>
+          </If>
 
           <div className={styles.history}>
             <span className={styles.heading}>Recent results</span>
             <ol className={styles.results}>
-              <History limit={MAX_HISTORY}>
-                {(entry) => (
-                  <Scope historyEntry={entry}>
-                    <li className={styles.result}>
-                      <HistoryPlacement className={styles.place} format={ordinal} />
-                      <HistoryTournament className={styles.tournament} />
-                      <HistoryEvent className={styles.event} hide />
-                    </li>
-                  </Scope>
-                )}
-              </History>
+              <If of={History} fallback={<li className={styles.result}>No results</li>}>
+                <History limit={MAX_HISTORY}>
+                  {(entry) => (
+                    <Scope historyEntry={entry}>
+                      <li className={styles.result}>
+                        <HistoryPlacement className={styles.place} format={ordinal} />
+                        <HistoryTournament className={styles.tournament} />
+                        <HistoryEvent className={styles.event} hide />
+                      </li>
+                    </Scope>
+                  )}
+                </History>
+              </If>
             </ol>
           </div>
         </div>
