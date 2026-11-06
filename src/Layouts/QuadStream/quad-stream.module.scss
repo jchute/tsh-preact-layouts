@@ -1,0 +1,106 @@
+// 2x2 grid of stream slots, each with a compact scoreboard.
+.screen {
+  --board: rgb(12 14 20 / 90%);
+  --fallback-1: #ef5350;
+  --fallback-2: #42a5f5;
+  --font: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --muted: rgb(255 255 255 / 60%);
+  --text: #fff;
+
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.quadrant {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  margin: 0;
+  min-height: 0;
+}
+
+// Fully transparent so the stream behind the browser source shows through
+.slot {
+  border: 1px solid rgb(255 255 255 / 25%);
+  min-height: 0;
+}
+
+.board {
+  align-items: stretch;
+  background: var(--board);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.contestant {
+  align-items: center;
+  border-bottom: 0.2em solid var(--team-color, var(--fallback));
+  display: grid;
+  gap: 0.6em;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 0.4em 0.8em;
+
+  &.one {
+    --fallback: var(--fallback-1);
+  }
+
+  &.two {
+    --fallback: var(--fallback-2);
+  }
+
+  &.flip {
+    grid-template-columns: auto minmax(0, 1fr);
+    text-align: right;
+
+    .score {
+      order: -1;
+    }
+  }
+}
+
+.name {
+  font-size: 1.3em;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score {
+  font-size: 1.6em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  min-width: 1em;
+  text-align: center;
+}
+
+.info {
+  align-content: center;
+  border-inline: 1px solid rgb(255 255 255 / 15%);
+  display: grid;
+  max-width: 12em;
+  min-width: 7em;
+  padding: 0.2em 0.8em;
+  text-align: center;
+}
+
+.round,
+.station {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.round {
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.station {
+  color: var(--muted);
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

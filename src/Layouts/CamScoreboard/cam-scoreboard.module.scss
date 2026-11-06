@@ -1,0 +1,118 @@
+// Compact scoreboard plus two camera slots. Change --cam-width to resize both slots.
+.screen {
+  --cam-width: 24em;
+  --fallback-1: #ff6b4a;
+  --fallback-2: #35c2b8;
+  --font: ui-rounded, "SF Pro Rounded", system-ui, "Segoe UI", Arial, sans-serif;
+  --panel: rgb(10 12 18 / 85%);
+  --text: #fff;
+
+  align-content: space-between;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-rows: auto 1fr;
+}
+
+.board {
+  align-items: stretch;
+  background: var(--panel);
+  border-radius: 0 0 1em 1em;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-self: center;
+  overflow: hidden;
+}
+
+.score {
+  align-items: center;
+  display: grid;
+  font-size: 2.2em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  justify-items: center;
+  min-width: 1.6em;
+
+  &.one {
+    background: var(--fallback-1);
+  }
+
+  &.two {
+    background: var(--fallback-2);
+  }
+}
+
+.info {
+  display: grid;
+  min-width: 14em;
+  padding: 0.5em 1.2em;
+  text-align: center;
+}
+
+.round {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.length {
+  font-size: 0.8em;
+  letter-spacing: 0.15em;
+  opacity: 0.6;
+}
+
+.cams {
+  align-self: end;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cam {
+  margin: 0;
+  width: var(--cam-width);
+
+  &.one {
+    --fallback: var(--fallback-1);
+  }
+
+  &.two {
+    --fallback: var(--fallback-2);
+  }
+
+  &.flip .plate {
+    flex-direction: row-reverse;
+  }
+}
+
+// Fully transparent so the camera behind the browser source shows through
+.slot {
+  aspect-ratio: 16 / 9;
+  border: 0.25em solid var(--team-color, var(--fallback));
+  border-bottom: 0;
+  border-radius: 0.8em 0.8em 0 0;
+  width: 100%;
+}
+
+.plate {
+  align-items: center;
+  background: var(--team-color, var(--fallback));
+  border-radius: 0 0 0.8em 0.8em;
+  display: flex;
+  gap: 0.6em;
+  padding: 0.5em 0.9em;
+}
+
+.name {
+  flex: 1;
+  font-size: 1.3em;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pronoun {
+  background: rgb(0 0 0 / 30%);
+  border-radius: 99em;
+  font-size: 0.8em;
+  padding: 0.15em 0.7em;
+}

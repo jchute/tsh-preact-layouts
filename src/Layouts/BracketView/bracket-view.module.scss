@@ -1,0 +1,180 @@
+// Blueprint-style bracket. Connectors are drawn from the slot each set sits in, so every round
+// column keeps the same total height and each slot is as tall as its round needs.
+.screen {
+  --bg: #0e1b2e;
+  --connector: rgb(130 180 255 / 40%);
+  --font: "Segoe UI", system-ui, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --muted: rgb(190 210 240 / 60%);
+  --panel: #16294a;
+  --text: #eaf2ff;
+  --winner: #7ee0a8;
+
+  align-content: stretch;
+  background: var(--bg);
+  background-image:
+    linear-gradient(rgb(130 180 255 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(130 180 255 / 6%) 1px, transparent 1px);
+  background-size: 2em 2em;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.8vw;
+  grid-auto-rows: minmax(0, 1fr);
+  grid-template-rows: auto;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  gap: 1.5em;
+}
+
+.event {
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
+.phase,
+.group {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 1.2em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.half {
+  display: grid;
+  gap: 0.5em;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+}
+
+.title {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 1em;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.rounds {
+  display: flex;
+  gap: 2.5em;
+  min-height: 0;
+}
+
+.round {
+  display: grid;
+  flex: 1;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+}
+
+.roundName {
+  color: var(--muted);
+  display: block;
+  font-size: 0.95em;
+  margin-bottom: 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sets {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.slot {
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+}
+
+.match {
+  background: var(--panel);
+  border: 1px solid var(--connector);
+  border-radius: 0.4em;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+
+  &.completed {
+    opacity: 0.6;
+  }
+}
+
+.side {
+  align-items: center;
+  display: flex;
+  gap: 0.5em;
+  justify-content: space-between;
+  padding: 0.4em 0.7em;
+
+  & + & {
+    border-top: 1px solid var(--connector);
+  }
+
+  &.winner {
+    color: var(--winner);
+    font-weight: 700;
+  }
+}
+
+.name {
+  font-size: 1.15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score {
+  font-family: var(--font-mono);
+  font-size: 1.15em;
+}
+
+// Connectors. Half of the gap between columns (1.25em) is drawn by each side:
+// - a stub leaving each set toward the next round (.slot::after),
+// - for pairs, a vertical line joining the two sets that feed one (.slot::before),
+// - a stub entering each set that is fed by the previous round (.match::before).
+.pairs .slot::after,
+.straight .slot::after {
+  border-top: 1px solid var(--connector);
+  content: "";
+  position: absolute;
+  right: -1.25em;
+  top: 50%;
+  width: 1.25em;
+}
+
+.pairs .slot::before {
+  border-right: 1px solid var(--connector);
+  content: "";
+  height: 50%;
+  position: absolute;
+  right: -1.25em;
+  width: 1px;
+}
+
+.pairs .slot:nth-child(odd)::before {
+  top: 50%;
+}
+
+.pairs .slot:nth-child(even)::before {
+  bottom: 50%;
+}
+
+.incoming .match::before {
+  border-top: 1px solid var(--connector);
+  content: "";
+  left: -1.25em;
+  position: absolute;
+  top: 50%;
+  width: 1.25em;
+}

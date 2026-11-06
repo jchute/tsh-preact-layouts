@@ -1,0 +1,114 @@
+// Clean broadcast look: two large transparent camera slots with thin plates.
+.screen {
+  --fallback-1: #e4572e;
+  --fallback-2: #29a0b1;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --plate: rgb(12 14 18 / 92%);
+  --text: #fff;
+
+  align-content: center;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-rows: auto auto;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  gap: 1.2em;
+  justify-content: center;
+}
+
+.round {
+  background: var(--plate);
+  font-size: 1.4em;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 0.3em 1.2em;
+  text-transform: uppercase;
+}
+
+.length {
+  background: var(--plate);
+  font-size: 1em;
+  letter-spacing: 0.15em;
+  padding: 0.4em 1em;
+  text-transform: uppercase;
+}
+
+.cams {
+  display: grid;
+  gap: 2vw;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.cam {
+  margin: 0;
+
+  &.one {
+    --fallback: var(--fallback-1);
+  }
+
+  &.two {
+    --fallback: var(--fallback-2);
+  }
+}
+
+// Fully transparent so the camera behind the browser source shows through
+.slot {
+  aspect-ratio: 16 / 9;
+  border: 0.2em solid var(--team-color, var(--fallback));
+  border-bottom: 0;
+}
+
+.plate {
+  align-items: center;
+  background: var(--plate);
+  border-bottom: 0.3em solid var(--team-color, var(--fallback));
+  display: grid;
+  gap: 1em;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  padding: 0.8em 1.2em;
+}
+
+.names {
+  min-width: 0;
+}
+
+.name,
+.tag {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name {
+  font-size: 2.2em;
+  font-weight: 700;
+}
+
+.tag {
+  font-size: 1em;
+  letter-spacing: 0.15em;
+  opacity: 0.65;
+  text-transform: uppercase;
+}
+
+.pronoun {
+  border: 1px solid rgb(255 255 255 / 40%);
+  border-radius: 99em;
+  font-size: 0.9em;
+  padding: 0.15em 0.8em;
+}
+
+.score {
+  background: var(--team-color, var(--fallback));
+  font-size: 2.6em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  min-width: 1.3em;
+  padding: 0 0.2em;
+  text-align: center;
+}

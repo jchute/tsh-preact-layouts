@@ -1,0 +1,152 @@
+// Clean light "departure board" with a mint accent.
+.screen {
+  --accent: #00b894;
+  --bg: #f6f7f4;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --muted: #6b7280;
+  --ink: #15171a;
+  --row: #fff;
+  --rule: #dfe2dc;
+
+  align-content: start;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1vw;
+  gap: 2em;
+}
+
+.header {
+  align-items: baseline;
+  border-bottom: 0.2em solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.6em;
+}
+
+.title {
+  font-size: 4.5em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.event {
+  color: var(--muted);
+  display: grid;
+  font-size: 1.4em;
+  text-align: right;
+}
+
+.list {
+  display: grid;
+  gap: 0.7em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.set {
+  align-items: center;
+  background: var(--row);
+  border: 1px solid var(--rule);
+  border-radius: 0.5em;
+  display: grid;
+  gap: 1.2em;
+  grid-template-columns: 3em 13em minmax(0, 1fr) auto minmax(0, 1fr) 9em;
+  padding: 0.8em 1.2em;
+
+  &.first {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+
+    .position {
+      background: var(--accent);
+      color: var(--ink);
+    }
+
+    .phase {
+      color: rgb(255 255 255 / 60%);
+    }
+  }
+}
+
+.position {
+  background: var(--rule);
+  border-radius: 50%;
+  font-size: 1.3em;
+  font-weight: 800;
+  height: 1.9em;
+  line-height: 1.9;
+  text-align: center;
+  width: 1.9em;
+}
+
+.round {
+  display: grid;
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.phase {
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 400;
+}
+
+.entrant {
+  align-items: center;
+  display: flex;
+  gap: 0.7em;
+  min-width: 0;
+
+  &.flip {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+}
+
+.names {
+  display: grid;
+  min-width: 0;
+}
+
+.name,
+.tag {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name {
+  font-size: 1.6em;
+  font-weight: 700;
+}
+
+.tag {
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.vs {
+  color: var(--muted);
+  font-size: 0.9em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.info {
+  color: var(--muted);
+  display: grid;
+  font-size: 0.95em;
+  text-align: right;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 1.6em;
+  margin: 0;
+}

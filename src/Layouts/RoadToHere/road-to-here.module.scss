@@ -1,0 +1,184 @@
+// Two vertical timelines on a deep green board, one per player.
+.screen {
+  --bg: radial-gradient(circle at 50% 0, #17352e, #0a1714 70%);
+  --fallback-1: #f0846b;
+  --fallback-2: #6bb7f0;
+  --font: Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, "Segoe UI", Arial, sans-serif;
+  --loss: #e0625a;
+  --muted: rgb(255 255 255 / 55%);
+  --text: #f4f1e8;
+  --win: #6fd392;
+
+  align-items: start;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.run {
+  display: grid;
+  gap: 1.5em;
+
+  &.one {
+    --fallback: var(--fallback-1);
+  }
+
+  &.two {
+    --fallback: var(--fallback-2);
+  }
+}
+
+.header {
+  border-bottom: 0.2em solid var(--team-color, var(--fallback));
+  display: grid;
+  padding-bottom: 0.8em;
+}
+
+.tag,
+.stats {
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 1em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.stats {
+  display: flex;
+  font-size: 0.85em;
+  gap: 1.5em;
+  margin-top: 0.4em;
+}
+
+.name {
+  font-size: 3.2em;
+  font-style: italic;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeline {
+  border-left: 0.15em solid rgb(255 255 255 / 20%);
+  display: grid;
+  gap: 1em;
+  list-style: none;
+  margin: 0 0 0 1em;
+  padding: 0 0 0 2em;
+}
+
+.stop {
+  align-items: center;
+  background: rgb(255 255 255 / 5%);
+  border-radius: 0.5em;
+  display: grid;
+  gap: 1em;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  padding: 0.7em 1em;
+  position: relative;
+
+  // The dot where the stop meets the timeline line
+  &::before {
+    background: var(--muted);
+    border-radius: 50%;
+    content: "";
+    height: 0.9em;
+    left: -2.5em;
+    margin-top: -0.45em;
+    position: absolute;
+    top: 50%;
+    width: 0.9em;
+  }
+
+  &.win::before {
+    background: var(--win);
+  }
+
+  &.loss::before {
+    background: var(--loss);
+  }
+}
+
+.badge {
+  background: var(--muted);
+  border-radius: 0.3em;
+  color: #0a1714;
+  font-family: var(--font-sans);
+  font-size: 1.2em;
+  font-weight: 800;
+  text-align: center;
+  width: 1.8em;
+
+  .win & {
+    background: var(--win);
+  }
+
+  .loss & {
+    background: var(--loss);
+  }
+}
+
+.info {
+  display: grid;
+  min-width: 0;
+}
+
+.round {
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+.versus {
+  font-family: var(--font-sans);
+  font-size: 1em;
+}
+
+.phase {
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.8em;
+}
+
+.chars {
+  display: inline-flex;
+  gap: 0.3em;
+}
+
+.score {
+  font-family: var(--font-sans);
+  font-size: 1.4em;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.empty {
+  color: var(--muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.divider {
+  align-self: center;
+  display: grid;
+  gap: 0.5em;
+  justify-items: center;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: 1.1em;
+  letter-spacing: 0.2em;
+  max-width: 10em;
+  text-transform: uppercase;
+}
+
+.vs {
+  font-size: 4em;
+  font-style: italic;
+  opacity: 0.4;
+}

@@ -1,0 +1,138 @@
+// Spotlight victory screen. The winner's team color drives the glow.
+.screen {
+  --bg: #07080c;
+  --fallback: #f5c542;
+  --font-display: "Didot", "Bodoni 72", Georgia, serif;
+  --font-sans: system-ui, "Segoe UI", Arial, sans-serif;
+  --text: #fff;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1vw;
+  overflow: hidden;
+}
+
+.stage {
+  --glow: var(--team-color, var(--fallback));
+
+  animation: scale-in 0.9s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  background:
+    radial-gradient(
+      ellipse at 50% 120%,
+      color-mix(in srgb, var(--glow) 60%, transparent),
+      transparent 65%
+    ),
+    conic-gradient(
+      from 90deg at 50% 130%,
+      transparent 0 40%,
+      rgb(255 255 255 / 7%) 45% 55%,
+      transparent 60%
+    );
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+}
+
+.art {
+  grid-row: 1 / span 2;
+  min-height: 0;
+  padding: 3em 0 0;
+}
+
+.card {
+  align-content: center;
+  display: grid;
+  gap: 0.4em;
+  padding-right: 4em;
+}
+
+.label {
+  color: var(--glow);
+  font-size: 1.8em;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+}
+
+.tag {
+  font-size: 1.8em;
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 7em;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  overflow-wrap: anywhere;
+  text-shadow: 0 0 0.5em color-mix(in srgb, var(--glow) 60%, transparent);
+}
+
+.flag {
+  margin-top: 0.6em;
+}
+
+.result {
+  align-items: center;
+  align-self: start;
+  column-gap: 0.5em;
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  padding: 0 4em 4em 0;
+}
+
+.score {
+  font-family: var(--font-display);
+  font-size: 6em;
+  line-height: 1;
+}
+
+.dash {
+  font-size: 4em;
+  opacity: 0.5;
+}
+
+.beat {
+  align-items: baseline;
+  display: flex;
+  font-size: 1.6em;
+  gap: 0.5em;
+  opacity: 0.85;
+  padding-left: 1em;
+}
+
+.loser {
+  font-weight: 700;
+}
+
+.round {
+  color: var(--glow);
+  font-size: 1.4em;
+  grid-column: 1 / -1;
+  letter-spacing: 0.2em;
+  margin-top: 0.8em;
+  text-transform: uppercase;
+}
+
+.waiting {
+  color: rgb(255 255 255 / 50%);
+  font-size: 2em;
+  place-self: center;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    animation: none;
+  }
+}

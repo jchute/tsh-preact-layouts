@@ -1,0 +1,119 @@
+// Broadcast news-style ticker. --duration is set by the layout from the number of results.
+.screen {
+  --accent: #ffcc00;
+  --bar: #0b1d3a;
+  --font: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --muted: rgb(255 255 255 / 60%);
+  --text: #fff;
+
+  align-content: end;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1vw;
+}
+
+.bar {
+  background: var(--bar);
+  border-top: 0.25em solid var(--accent);
+  display: flex;
+  height: 4em;
+}
+
+.label {
+  align-items: center;
+  background: var(--accent);
+  color: var(--bar);
+  display: flex;
+  flex: none;
+  font-size: 1.6em;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  padding: 0 1.2em;
+  text-transform: uppercase;
+}
+
+.window {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.track {
+  animation: scroll var(--duration, 60s) linear infinite;
+  display: flex;
+  flex: none;
+  width: max-content;
+}
+
+// Each run is at least as wide as the window, so the loop has no gaps with only a few results
+.run {
+  display: flex;
+  flex: none;
+  justify-content: space-around;
+  min-width: calc(100vw - 14em);
+}
+
+.result {
+  align-items: baseline;
+  display: flex;
+  flex: none;
+  gap: 0.7em;
+  padding: 0 2.2em;
+  position: relative;
+  white-space: nowrap;
+
+  &::after {
+    background: var(--accent);
+    content: "";
+    height: 0.6em;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 0.6em;
+  }
+}
+
+.round {
+  color: var(--muted);
+  font-size: 0.9em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.winner {
+  font-size: 1.7em;
+  font-weight: 700;
+}
+
+.score {
+  background: var(--accent);
+  color: var(--bar);
+  font-size: 1.4em;
+  font-weight: 800;
+  padding: 0 0.5em;
+}
+
+.loser {
+  color: var(--muted);
+  font-size: 1.5em;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 1.4em;
+  padding: 0 1.5em;
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}

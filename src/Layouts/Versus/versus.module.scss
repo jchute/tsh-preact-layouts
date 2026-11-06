@@ -1,0 +1,175 @@
+// Diagonal split splash. --split is where the two halves meet at the top and bottom.
+.screen {
+  --fallback-1: #c62f3b;
+  --fallback-2: #2457c7;
+  --font-display: Impact, "Arial Narrow Bold", "Helvetica Neue", Arial, sans-serif;
+  --font-text: system-ui, "Segoe UI", Arial, sans-serif;
+  --skew: 8%;
+  --text: #fff;
+
+  background: #0b0d12;
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: 1vw;
+  overflow: hidden;
+}
+
+.half {
+  animation: slide-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  background: linear-gradient(
+    160deg,
+    var(--team-color, var(--fallback)),
+    color-mix(in srgb, var(--team-color, var(--fallback)) 35%, black)
+  );
+  display: grid;
+  grid-area: 1 / 1;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  position: relative;
+
+  &.one {
+    --fallback: var(--fallback-1);
+
+    clip-path: polygon(0 0, calc(50% + var(--skew)) 0, calc(50% - var(--skew)) 100%, 0 100%);
+    padding-right: 50%;
+  }
+
+  &.two {
+    --fallback: var(--fallback-2);
+
+    animation-name: slide-in-right;
+    clip-path: polygon(calc(50% + var(--skew)) 0, 100% 0, 100% 100%, calc(50% - var(--skew)) 100%);
+    padding-left: 50%;
+    text-align: right;
+  }
+
+  &.flip .facts {
+    justify-content: end;
+  }
+
+  &.one .art {
+    inset: 0 50% 0 0;
+  }
+
+  &.two .art {
+    inset: 0 0 0 50%;
+  }
+}
+
+.art {
+  opacity: 0.9;
+  position: absolute;
+}
+
+.details {
+  display: grid;
+  padding: 0 4em 3.5em;
+  position: relative;
+  text-shadow: 0 0.1em 0.5em rgb(0 0 0 / 55%);
+}
+
+.name,
+.tag {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 5em;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.tag {
+  font-size: 1.6em;
+  letter-spacing: 0.2em;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.facts {
+  align-items: center;
+  display: flex;
+  gap: 1em;
+  margin-top: 0.8em;
+}
+
+.fact {
+  background: rgb(0 0 0 / 35%);
+  border-radius: 99em;
+  font-size: 1.2em;
+  font-weight: 600;
+  padding: 0.2em 0.9em;
+}
+
+.center {
+  align-content: center;
+  animation: pop 0.6s 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  display: grid;
+  gap: 0.4em;
+  grid-area: 1 / 1;
+  justify-items: center;
+  place-self: center;
+  text-align: center;
+  text-shadow: 0 0.1em 0.6em rgb(0 0 0 / 70%);
+}
+
+.vs {
+  font-family: var(--font-display);
+  font-size: 9em;
+  font-style: italic;
+  line-height: 0.9;
+}
+
+.round {
+  background: #fff;
+  color: #111;
+  font-size: 1.3em;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 0.2em 1em;
+  text-shadow: none;
+  text-transform: uppercase;
+}
+
+.h2h {
+  font-size: 1.6em;
+  font-weight: 700;
+}
+
+.length {
+  font-size: 1em;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .half,
+  .center {
+    animation: none;
+  }
+}
