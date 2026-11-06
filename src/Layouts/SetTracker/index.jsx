@@ -1,5 +1,4 @@
 import styles from "./set-tracker.module.scss";
-import { Image } from "@Components/Elements/Image";
 import { Screen } from "@Components/Elements/Screen";
 import { useSelector } from "@Components/TSH/createField";
 import {
@@ -9,11 +8,11 @@ import {
   Score,
   Scope,
   SetLength,
+  StageImage,
   StageName,
   useTeam,
 } from "@Components/TSH";
 import { getGame, getGames } from "@State/selectors";
-import { resolveAsset } from "@State/tsh";
 import { cx } from "@Utils/cx";
 
 /**
@@ -24,12 +23,11 @@ import { cx } from "@Utils/cx";
  * @param {number} props.game Which game of the set, starting at 1.
  */
 const Card = ({ game }) => {
-  const { image, tie, winner } = useSelector(
+  const { tie, winner } = useSelector(
     (tsh, props) => {
       const entry = getGame(tsh, props);
 
       return {
-        image: resolveAsset(entry?.path),
         tie: Boolean(entry?.tie),
         winner: entry?.t1_win ? 1 : entry?.t2_win ? 2 : null,
       };
@@ -52,7 +50,7 @@ const Card = ({ game }) => {
     >
       <span className={styles.number}>Game {game}</span>
       <div className={styles.picture}>
-        <Image height="100%" hide src={image} width="100%" />
+        <StageImage fill game={game} height="100%" hide width="100%" />
       </div>
       <StageName className={styles.stageName} fallback="Stage TBD" game={game} />
       <span className={styles.outcome}>

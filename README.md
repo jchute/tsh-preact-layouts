@@ -279,16 +279,17 @@ Next steps: see the [Quick start examples](#quick-start-examples).
 
 Every TSH component is made by one of the factories in [`createField.jsx`](src/Components/TSH/createField.jsx):
 
-| Kind          | Behavior                                                          | Extra props                                   |
-| ------------- | ----------------------------------------------------------------- | --------------------------------------------- |
-| **Text**      | Shows a value as a `<span>`.                                      | `className`, `fallback`, `format`, `hide`     |
-| **Image**     | Shows an image URL as an `<img>`.                                 | `className`, `alt`, `width`, `height`, `hide` |
-| **List**      | Calls its children function once per item, with the item's index. | `limit`                                       |
-| **Condition** | Renders its children only when a value is truthy.                 | `not` (invert)                                |
+| Kind          | Behavior                                                          | Extra props                                           |
+| ------------- | ----------------------------------------------------------------- | ----------------------------------------------------- |
+| **Text**      | Shows a value as a `<span>`.                                      | `className`, `fallback`, `format`, `hide`             |
+| **Image**     | Shows an image URL as an `<img>`.                                 | `className`, `alt`, `width`, `height`, `fill`, `hide` |
+| **List**      | Calls its children function once per item, with the item's index. | `limit`                                               |
+| **Condition** | Renders its children only when a value is truthy.                 | `not` (invert)                                        |
 
 - `fallback` is shown when the value is empty, and `format` only runs when it isn't.
 - `hide` removes the element entirely when it would be empty.
 - Images default to `1em` square, and `width`/`height` fill in for each other.
+- Images fit inside their box by default. Add `fill` to make the image fill the box, clipping any edges that don't fit.
 - List children **must be a function**: `<Players>{(player) => ...}</Players>`.
 
 ### Common props
@@ -443,6 +444,7 @@ Takes `stage` plus `counterpick` or `all`, or `game`, or `selected`.
 | `RulesetName`                                               | The ruleset's name.                                                       |
 | `Stages`                                                    | List of the ruleset's stages, passing the `stage` index.                  |
 | `StageName`                                                 | The stage's name. Takes `locale`.                                         |
+| `StageImage`                                                | The stage's image.                                                        |
 | `IfStageStruck`, `StageStruckBy`                            | Whether a stage is struck, and by which team.                             |
 | `IfStageBanned`                                             | Condition: banned by DSR or modified DSR.                                 |
 | `IfStageSelected`                                           | Condition: the stage picked for the current game.                         |

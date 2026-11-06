@@ -1,5 +1,6 @@
-import { createKeyField, createList, createTextField } from "../createField";
+import { createImageField, createKeyField, createList, createTextField } from "../createField";
 import { getRuleset, getRulesetStages, getStage, readLocalizedName } from "@State/selectors";
+import { resolveAsset } from "@State/tsh";
 
 /**
  * Stages. Every stage component reads one stage from one of three places:
@@ -25,3 +26,8 @@ export const Stages = createList(getRulesetStages);
 export const StageName = createTextField((tsh, { locale, ...props }) => {
   return readLocalizedName(getStage(tsh, props), locale);
 });
+
+/** The stage's image. */
+export const StageImage = createImageField((tsh, props) =>
+  resolveAsset(getStage(tsh, props)?.path),
+);

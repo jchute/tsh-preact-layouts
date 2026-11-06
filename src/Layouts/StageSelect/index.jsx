@@ -1,5 +1,4 @@
 import styles from "./stage-select.module.scss";
-import { Image } from "@Components/Elements/Image";
 import { Screen } from "@Components/Elements/Screen";
 import { useSelector } from "@Components/TSH/createField";
 import {
@@ -7,11 +6,11 @@ import {
   RulesetName,
   Scope,
   Stages,
+  StageImage,
   StageName,
   StageStrikeGame,
 } from "@Components/TSH";
 import {
-  getStage,
   getStageStrike,
   getStageStrikeTurn,
   getStageStruckBy,
@@ -20,7 +19,6 @@ import {
   isStageStrikePicking,
   isStageStruck,
 } from "@State/selectors";
-import { resolveAsset } from "@State/tsh";
 import { cx } from "@Utils/cx";
 
 /**
@@ -31,10 +29,9 @@ import { cx } from "@Utils/cx";
  * @param {number} props.stage Which stage in the ruleset's list (starters, then counterpicks).
  */
 const StageCard = ({ stage }) => {
-  const { banned, image, selected, struck, struckBy } = useSelector(
+  const { banned, selected, struck, struckBy } = useSelector(
     (tsh, props) => ({
       banned: isStageBanned(tsh, props),
-      image: resolveAsset(getStage(tsh, props)?.path),
       selected: isStageSelected(tsh, props),
       struck: isStageStruck(tsh, props),
       struckBy: getStageStruckBy(tsh, props),
@@ -52,7 +49,7 @@ const StageCard = ({ stage }) => {
       )}
     >
       <div className={styles.picture}>
-        <Image height="100%" hide src={image} width="100%" />
+        <StageImage all fill height="100%" hide stage={stage} width="100%" />
         {struck && (
           <div className={cx(styles.stamp, struckBy === 2 ? styles.two : styles.one)}>
             <span>Struck</span>
