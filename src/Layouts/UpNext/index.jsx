@@ -1,11 +1,11 @@
 import styles from "./up-next.module.scss";
 import { Screen } from "@Components/Elements/Screen";
-import { useSelector } from "@Components/TSH/createField";
 import {
   CountryFlag,
   DisplayName,
   DisplayTag,
   EventName,
+  If,
   QueuedSetBestOf,
   QueuedSetPhase,
   QueuedSetRound,
@@ -14,7 +14,6 @@ import {
   Scope,
   TournamentName,
 } from "@Components/TSH";
-import { getQueue } from "@State/selectors";
 import { cx } from "@Utils/cx";
 
 /** How many upcoming sets to list. */
@@ -42,8 +41,6 @@ const Entrant = ({ flip = false, team }) => (
  * and station. The first entry is called out, as the stream queue can include the set being played.
  */
 export const UpNext = () => {
-  const count = Object.values(useSelector(getQueue, { queue: "stream" })).filter(Boolean).length;
-
   return (
     <Screen className={styles.screen} padding="4vw">
       <header className={styles.header}>
@@ -79,7 +76,9 @@ export const UpNext = () => {
         </ol>
       </Scope>
 
-      {count === 0 && <p className={styles.empty}>Nothing in the queue yet.</p>}
+      <If not of={QueuedSets} queue="stream">
+        <p className={styles.empty}>Nothing in the queue yet.</p>
+      </If>
     </Screen>
   );
 };

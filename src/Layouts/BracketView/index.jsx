@@ -10,8 +10,9 @@ import {
   BracketSets,
   BracketSetScore,
   EventName,
+  If,
 } from "@Components/TSH";
-import { getBracketRounds, getBracketSet, getBracketSets } from "@State/selectors";
+import { getBracketSet, getBracketSets } from "@State/selectors";
 import { cx } from "@Utils/cx";
 
 /**
@@ -128,8 +129,6 @@ const Half = ({ losers = false, title }) => {
  * showing both players and scores. The losers side is left out for single elimination brackets.
  */
 export const BracketView = () => {
-  const hasLosers = Object.keys(useSelector(getBracketRounds, { losers: true })).length > 0;
-
   return (
     <Screen className={styles.screen} padding="2vw">
       <header className={styles.header}>
@@ -138,7 +137,9 @@ export const BracketView = () => {
         <BracketPhaseGroup className={styles.group} hide />
       </header>
       <Half title="Winners" />
-      {hasLosers && <Half losers title="Losers" />}
+      <If losers of={BracketRounds}>
+        <Half losers title="Losers" />
+      </If>
     </Screen>
   );
 };

@@ -4,6 +4,7 @@ import { useSelector } from "@Components/TSH/createField";
 import {
   DisplayName,
   Games,
+  If,
   RoundName,
   Score,
   Scope,
@@ -94,9 +95,9 @@ export const SetTracker = () => {
       <ol className={styles.cards} style={{ "--count": Math.max(count, 1) }}>
         <Games>{(game) => <Card game={game} />}</Games>
       </ol>
-      {count === 0 && (
+      <If not of={Games}>
         <p className={styles.notice}>Turn on the game tracker in TSH to see games.</p>
-      )}
+      </If>
     </Screen>
   );
 };

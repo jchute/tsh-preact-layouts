@@ -6,6 +6,7 @@ import {
   Characters,
   DisplayName,
   HeadToHead,
+  If,
   RecentSetDate,
   RecentSetEvent,
   RecentSetRound,
@@ -13,9 +14,10 @@ import {
   RecentSetScore,
   RecentSetTournament,
   IfRecentSetOnline,
+  IfRecentSetsLoading,
   RoundName,
 } from "@Components/TSH";
-import { getRecentSet, getRecentSets, getScoreboard } from "@State/selectors";
+import { getRecentSet } from "@State/selectors";
 import { cx } from "@Utils/cx";
 
 /** Which TSH image pack to use for character icons. Check which packs your game provides. */
@@ -90,11 +92,6 @@ const Meeting = ({ recentSet }) => {
  * loading the history, and players who haven't met.
  */
 export const RivalryHistory = () => {
-  const { loading, count } = useSelector((tsh, props) => ({
-    count: Object.keys(getRecentSets(tsh, props)).length,
-    loading: getScoreboard(tsh, props)?.recent_sets?.state === "loading",
-  }));
-
   return (
     <Screen className={styles.screen} padding="3vw">
       <header className={styles.header}>
@@ -111,8 +108,15 @@ export const RivalryHistory = () => {
         <RecentSets limit={MAX_ROWS}>{(recentSet) => <Meeting recentSet={recentSet} />}</RecentSets>
       </ol>
 
-      {loading && <p className={styles.notice}>Loading previous meetings…</p>}
-      {!loading && count === 0 && <p className={styles.notice}>First time these two have met.</p>}
+      <IfRecentSetsLoading>
+        <p className={styles.notice}>Loading previous meetings…</p>
+      </IfRecentSetsLoading>
+
+      <IfRecentSetsLoading not>
+        <If not of={RecentSets}>
+          <p className={styles.notice}>First time these two have met.</p>
+        </If>
+      </IfRecentSetsLoading>
     </Screen>
   );
 };

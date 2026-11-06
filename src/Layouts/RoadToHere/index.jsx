@@ -6,6 +6,7 @@ import {
   Characters,
   DisplayName,
   DisplayTag,
+  If,
   LastSetName,
   LastSetPhase,
   LastSetRound,
@@ -17,7 +18,7 @@ import {
   Seed,
   useTeam,
 } from "@Components/TSH";
-import { getLastSet, getLastSets } from "@State/selectors";
+import { getLastSet } from "@State/selectors";
 import { cx } from "@Utils/cx";
 
 /** Which TSH image pack to use for character icons. Check which packs your game provides. */
@@ -87,7 +88,6 @@ const Stop = ({ lastSet, team }) => {
  */
 const Run = ({ team }) => {
   const color = useTeam({ team })?.color;
-  const count = Object.keys(useSelector(getLastSets, { team })).length;
 
   return (
     <Scope team={team}>
@@ -108,7 +108,9 @@ const Run = ({ team }) => {
             {(lastSet) => <Stop lastSet={lastSet} team={team} />}
           </LastSets>
         </ol>
-        {count === 0 && <p className={styles.empty}>No sets played yet</p>}
+        <If not of={LastSets}>
+          <p className={styles.empty}>No sets played yet</p>
+        </If>
       </section>
     </Scope>
   );

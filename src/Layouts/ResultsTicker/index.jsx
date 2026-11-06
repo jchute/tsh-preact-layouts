@@ -6,6 +6,7 @@ import {
   CompletedSetRound,
   CompletedSets,
   CompletedSetScore,
+  If,
   Scope,
 } from "@Components/TSH";
 import { getCompletedSets } from "@State/selectors";
@@ -47,9 +48,10 @@ export const ResultsTicker = () => {
       <div className={styles.bar}>
         <span className={styles.label}>Results</span>
         <div className={styles.window}>
-          {count === 0 ? (
-            <span className={styles.empty}>No completed sets yet</span>
-          ) : (
+          <If
+            of={CompletedSets}
+            fallback={<span className={styles.empty}>No completed sets yet</span>}
+          >
             <div
               className={styles.track}
               style={{ "--duration": `${count * SECONDS_PER_RESULT}s` }}
@@ -61,7 +63,7 @@ export const ResultsTicker = () => {
                 <Results />
               </div>
             </div>
-          )}
+          </If>
         </div>
       </div>
     </Screen>
